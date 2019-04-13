@@ -1,0 +1,27 @@
+Port 22
+AddressFamily any
+ListenAddress 0.0.0.0
+ListenAddress ::
+
+AllowAgentForwarding yes
+AllowStreamLocalForwarding no
+AllowTcpForwarding no
+AuthenticationMethods publickey password
+AuthorizedKeysFile .ssh/authorized_keys
+Banner none
+ChrootDirectory none
+LogLevel VERBOSE
+PermitRootLogin no
+PrintMotd yes
+UsePAM no
+
+ChallengeResponseAuthentication no
+GSSAPIAuthentication no
+HostbasedAuthentication no
+KbdInteractiveAuthentication no
+KerberosAuthentication no
+PasswordAuthentication no
+PubkeyAuthentication yes
+
+Match User adsr
+PasswordAuthentication yes

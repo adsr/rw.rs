@@ -1,0 +1,4 @@
+SHELL=/bin/bash
+0-59/10 * * * * root /opt/rw.rs/bin/pull_repo.sh &>/dev/null
+3-59/10 * * * * root /opt/rw.rs/bin/gen_motd.sh &>/dev/null
+6-59/10 * * * * root /opt/rw.rs/bin/create_users.sh &>/dev/null
