@@ -12,8 +12,8 @@ Banner none
 ChrootDirectory none
 LogLevel VERBOSE
 PermitRootLogin no
-PrintMotd yes
-UsePAM no
+PrintMotd no
+UsePAM yes
 
 ChallengeResponseAuthentication no
 GSSAPIAuthentication no
