@@ -16,6 +16,7 @@ comm -13 <(cut -d: -f1 /etc/passwd | sort) <(ls -1 "$rwrs_root/users" | sort) | 
         continue
     fi
     adduser --disabled-password --gecos '' $uname
+    setquota -u $uname $quota_soft $quota_hard 0 0 -a
     uid=$(id -u $uname)
     ln -s $restricted_slice_dir "/etc/systemd/system/user-$uid.slice.d"
     systemctl daemon-reload
