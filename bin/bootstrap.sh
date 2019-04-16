@@ -6,7 +6,7 @@ source "$(cd $(dirname "${BASH_SOURCE[0]}") &>/dev/null && pwd)/common.sh"
 apt install -y build-essential libtool sudo quota net-tools curl git zsh vim emacs nano mle screen tmux irssi weechat inspircd
 
 # configure quota
-awk -vq=$quota_path '{if($2==q){ $4=$4",usrjquota=/aquota.user,jqfmt=vfsv1" } print}' /etc/fstab >/etc/fstab.new
+awk -vq=$quota_path '{if($2==q){ $4=$4",usrjquota=aquota.user,jqfmt=vfsv1" } print}' /etc/fstab >/etc/fstab.new
 mv -vf /etc/fstab.new /etc/fstab
 mount -vo remount $quota_path
 quotacheck -ucm $quota_path
