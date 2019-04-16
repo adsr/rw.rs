@@ -3,10 +3,14 @@ set -eu
 source "$(cd $(dirname "${BASH_SOURCE[0]}") &>/dev/null && pwd)/common.sh"
 
 # install packages
-apt install -y build-essential libtool sudo quota net-tools curl git zsh vim emacs nano mle screen tmux irssi weechat inspircd
+apt install -y build-essential libtool libtool-bin sudo quota net-tools curl \
+    git zsh vim emacs nano mle screen tmux irssi weechat inspircd subversion \
+    libxml2-dev libpcre3-dev
 
 # configure quota
-awk -vq=$quota_path '{if($2==q){ $4=$4",usrjquota=aquota.user,jqfmt=vfsv1" } print}' /etc/fstab >/etc/fstab.new
+awk -vq=$quota_path \
+    '{if($2==q){ $4=$4",usrjquota=aquota.user,jqfmt=vfsv1" } print}' \
+    /etc/fstab >/etc/fstab.new
 mv -vf /etc/fstab.new /etc/fstab
 mount -vo remount $quota_path
 quotacheck -ucm $quota_path
@@ -35,7 +39,29 @@ chmod 700 /etc/inspircd/
 chmod 600 /etc/inspircd/inspircd.conf
 systemctl restart inspircd
 
+# configure apache
+wget "https://github.com/apache/httpd/archive/${httpd_version}.tar.gz"
+tar xf "${httpd_version}.tar.gz"
+pushd "httpd-${httpd_version}"
+    svn co http://svn.apache.org/repos/asf/apr/apr/trunk srclib/apr
+    ./buildconf
+    ./configure --prefix=/usr/httpd --with-included-apr --with-libxml2=/usr \
+        --enable-mods-shared=all --enable-mpms-shared=all --enable-suexec \
+        --enable-proxy --enable-proxy-fcgi --enable-userdir
+    make
+    make install
+popd
+groupadd apache
+useradd --system --home /usr/httpd --shell /usr/sbin/nologin --gid apache apache
+cp -vf "$rwrs_root/etc/httpd.service" /etc/systemd/system/
+cp -vf "$rwrs_root/etc/httpd.conf" /usr/httpd/conf/
+rm -rf /usr/httpd/htdocs/
+ln -s "$rwrs_root/htdocs" /usr/httpd/htdocs
+systemctl daemon-reload
+systemctl enable httpd
+systemctl start httpd
+
 # TODO tls ircd
-# TODO httpd with per-user web dirs
 # TODO simple alerting
 # TODO smoker tests
+# TODO per-user fcgi and services

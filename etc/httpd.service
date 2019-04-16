@@ -1,0 +1,13 @@
+[Unit]
+Description=Apache Web Server
+After=network.target remote-fs.target nss-lookup.target
+
+[Service]
+Type=forking
+PIDFile=/usr/httpd/logs/httpd.pid
+ExecStart=/usr/httpd/bin/apachectl start
+ExecStop=/usr/httpd/bin/apachectl graceful-stop
+ExecReload=/usr/httpd/bin/apachectl graceful
+
+[Install]
+WantedBy=multi-user.target
