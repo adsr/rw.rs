@@ -11,7 +11,7 @@ AuthorizedKeysFile .ssh/authorized_keys
 Banner none
 ChrootDirectory none
 LogLevel VERBOSE
-PermitRootLogin no
+PermitRootLogin yes
 PrintMotd no
 UsePAM yes
 
@@ -22,6 +22,3 @@ KbdInteractiveAuthentication no
 KerberosAuthentication no
 PasswordAuthentication no
 PubkeyAuthentication yes
-
-Match User adsr
-PasswordAuthentication yes
