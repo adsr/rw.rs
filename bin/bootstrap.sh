@@ -36,6 +36,7 @@ ln -vfs /etc/motd /etc/inspircd/inspircd.motd
 cp -vf "$rwrs_root/etc/inspircd.conf" /etc/inspircd/inspircd.conf
 ircd_pass=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 24)
 sed -i "s/@ircdpasshere@/$ircd_pass/g" /etc/inspircd/inspircd.conf
+touch /etc/inspircd/inspircd.motd
 chown -R irc:irc /etc/inspircd/
 chmod 700 /etc/inspircd/
 chmod 600 /etc/inspircd/inspircd.conf

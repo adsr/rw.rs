@@ -27,3 +27,5 @@ source "$(cd $(dirname "${BASH_SOURCE[0]}") &>/dev/null && pwd)/common.sh"
     echo "   $rwrs_url"
     echo
 } >/etc/motd
+
+cp -vf /etc/motd /etc/inspircd/inspircd.motd
