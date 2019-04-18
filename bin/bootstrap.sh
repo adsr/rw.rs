@@ -5,7 +5,7 @@ source "$(cd $(dirname "${BASH_SOURCE[0]}") &>/dev/null && pwd)/common.sh"
 # install packages
 apt install -y build-essential libtool libtool-bin sudo quota net-tools curl \
     git zsh vim emacs nano mle screen tmux irssi weechat inspircd subversion \
-    libxml2-dev libpcre3-dev
+    libxml2-dev libpcre3-dev strace gdb socat sqlite3
 
 # configure quota
 awk -vq=$quota_path \
@@ -47,7 +47,7 @@ pushd "httpd-${httpd_version}"
     ./buildconf
     ./configure --prefix=/usr/httpd --with-included-apr --with-libxml2=/usr \
         --enable-mods-shared=all --enable-mpms-shared=all --enable-suexec \
-        --enable-proxy --enable-proxy-fcgi --enable-userdir
+        --enable-proxy --enable-cgi --enable-userdir
     make
     make install
 popd
