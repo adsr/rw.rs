@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eu
+set -eux
 source "$(cd $(dirname "${BASH_SOURCE[0]}") &>/dev/null && pwd)/common.sh"
 
 # install packages
@@ -8,13 +8,15 @@ apt install -y build-essential libtool libtool-bin sudo quota net-tools curl \
     libxml2-dev libpcre3-dev strace gdb socat sqlite3
 
 # configure quota
-awk -vq=$quota_path \
-    '{if($2==q){ $4=$4",usrjquota=aquota.user,jqfmt=vfsv1" } print}' \
-    /etc/fstab >/etc/fstab.new
-mv -vf /etc/fstab.new /etc/fstab
-mount -vo remount $quota_path
-quotacheck -ucm $quota_path
-quotaon -v $quota_path
+if [ ! -f /aquota.user ]; then
+    awk -vq=$quota_path \
+        '{if($2==q){ $4=$4",usrjquota=aquota.user,jqfmt=vfsv1" } print}' \
+        /etc/fstab >/etc/fstab.new
+    mv -vf /etc/fstab.new /etc/fstab
+    mount -vo remount $quota_path
+    quotacheck -ucm $quota_path
+    quotaon -v $quota_path
+fi
 
 # configure sshd
 cp -vf "$rwrs_root/etc/sshd_config" /etc/ssh/
@@ -40,6 +42,7 @@ chmod 600 /etc/inspircd/inspircd.conf
 systemctl restart inspircd
 
 # configure apache
+pushd ~
 wget "https://github.com/apache/httpd/archive/${httpd_version}.tar.gz"
 tar xf "${httpd_version}.tar.gz"
 pushd "httpd-${httpd_version}"
@@ -60,8 +63,8 @@ ln -s "$rwrs_root/htdocs" /usr/httpd/htdocs
 systemctl daemon-reload
 systemctl enable httpd
 systemctl start httpd
+popd
 
 # TODO tls ircd
 # TODO simple alerting
 # TODO smoker tests
-# TODO per-user fcgi and services
