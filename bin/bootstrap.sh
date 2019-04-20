@@ -3,9 +3,10 @@ set -eux
 source "$(cd $(dirname "${BASH_SOURCE[0]}") &>/dev/null && pwd)/common.sh"
 
 # install packages
-apt install -y build-essential libtool libtool-bin sudo quota net-tools curl \
+DEBIAN_FRONTEND=noninteractive \
+apt install -yq build-essential libtool libtool-bin sudo quota net-tools curl \
     git zsh vim emacs nano mle screen tmux irssi weechat inspircd subversion \
-    libxml2-dev libpcre3-dev strace gdb socat sqlite3
+    libxml2-dev libpcre3-dev strace gdb socat sqlite3 php7.3
 
 # configure quota
 if [ ! -f /aquota.user ]; then
@@ -26,7 +27,8 @@ fi
 
 # configure restricted user slice
 if ! diff "$rwrs_root/etc/user-restricted.slice.conf" \
-          "$restricted_slice_dir/user-restricted.slice.conf" &>/dev/null; then
+          "$restricted_slice_dir/user-restricted.slice.conf" &>/dev/null
+then
     mkdir -p $restricted_slice_dir
     cp -vf "$rwrs_root/etc/user-restricted.slice.conf" $restricted_slice_dir
     systemctl daemon-reload
@@ -39,7 +41,8 @@ fi
 
 # configure ircd
 if ! diff "$rwrs_root/etc/inspircd.conf" \
-          /etc/inspircd/inspircd.conf &>/dev/null; then
+          /etc/inspircd/inspircd.conf &>/dev/null
+then
     cp -vf "$rwrs_root/etc/inspircd.conf" /etc/inspircd/inspircd.conf
     ircd_pass=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 24)
     sed -i "s/@ircdpasshere@/$ircd_pass/g" /etc/inspircd/inspircd.conf
@@ -70,12 +73,9 @@ if [ ! -f /usr/httpd/bin/httpd ]; then
 fi
 
 # configure apache
-httpd_diff=0
-diff "$rwrs_root/etc/httpd.service" /etc/systemd/system/httpd.service
-httpd_diff=$((httpd_diff+$?))
-diff "$rwrs_root/etc/httpd.conf" /usr/httpd/conf/httpd.conf
-httpd_diff=$((httpd_diff+$?))
-if [ "$httpd_diff" -ne 0 ]; then
+if ! diff "$rwrs_root/etc/httpd.service" /etc/systemd/system/httpd.service || \
+   ! diff "$rwrs_root/etc/httpd.conf" /usr/httpd/conf/httpd.conf
+then
     cp -vf "$rwrs_root/etc/httpd.service" /etc/systemd/system/
     cp -vf "$rwrs_root/etc/httpd.conf" /usr/httpd/conf/
     rm -rf /usr/httpd/htdocs
@@ -86,5 +86,5 @@ if [ "$httpd_diff" -ne 0 ]; then
 fi
 
 # TODO tls ircd
-# TODO simple alerting
-# TODO smoker tests
+# TODO tls httpd
+# TODO alerting
