@@ -6,7 +6,7 @@ source "$(cd $(dirname "${BASH_SOURCE[0]}") &>/dev/null && pwd)/common.sh"
 DEBIAN_FRONTEND=noninteractive \
 apt install -yq build-essential libtool libtool-bin sudo quota net-tools curl \
     git zsh vim emacs nano mle screen tmux irssi weechat inspircd subversion \
-    libxml2-dev libpcre3-dev strace gdb socat sqlite3 php7.3
+    libxml2-dev libpcre3-dev strace gdb socat sqlite3 php7.3 fish mosh stow
 
 # configure quota
 if [ ! -f /aquota.user ]; then
