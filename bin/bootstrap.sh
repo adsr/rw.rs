@@ -40,8 +40,8 @@ if ! diff "$rwrs_root/etc/cron" /etc/cron.d/rw-rs &>/dev/null; then
 fi
 
 # configure ircd
-if ! diff "$rwrs_root/etc/inspircd.conf" \
-          /etc/inspircd/inspircd.conf &>/dev/null
+if ! diff <(grep -v pass "$rwrs_root/etc/inspircd.conf") \
+          <(grep -v pass /etc/inspircd/inspircd.conf) &>/dev/null
 then
     cp -vf "$rwrs_root/etc/inspircd.conf" /etc/inspircd/inspircd.conf
     ircd_pass=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 24)
