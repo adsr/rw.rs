@@ -3,3 +3,4 @@ PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 0-59/10 * * * * root /opt/rw.rs/bin/pull_repo.sh &>/dev/null
 1-59/10 * * * * root /opt/rw.rs/bin/gen_motd.sh &>/dev/null
 2-59/10 * * * * root /opt/rw.rs/bin/create_users.sh &>/dev/null
+3-59/10 * * * * root /opt/rw.rs/bin/gen_footer.sh &>/dev/null

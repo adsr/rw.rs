@@ -11,4 +11,6 @@ quota_soft='960M'
 quota_hard='1024M'
 default_user_motd='...'
 httpd_version='2.4.39'
+httpd_root='/usr/httpd'
+htdocs_root="$httpd_root/htdocs"
 do_not_pull_fname='.do_not_pull'
