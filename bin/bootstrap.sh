@@ -54,35 +54,35 @@ then
 fi
 
 # build apache
-if [ ! -f /usr/httpd/bin/httpd ]; then
+if [ ! -f $httpd_root/bin/httpd ]; then
     pushd ~
     wget "https://github.com/apache/httpd/archive/${httpd_version}.tar.gz"
     tar xf "${httpd_version}.tar.gz"
     pushd "httpd-${httpd_version}"
     svn co http://svn.apache.org/repos/asf/apr/apr/trunk srclib/apr
     ./buildconf
-    ./configure --prefix=/usr/httpd --with-included-apr --with-libxml2=/usr \
+    ./configure --prefix=$httpd_root --with-included-apr --with-libxml2=/usr \
         --enable-mods-shared=all --enable-mpms-shared=all --enable-suexec \
         --enable-proxy --enable-cgi --enable-userdir
     make
     make install
     popd
     groupadd apache
-    useradd -r -d /usr/httpd -s /usr/sbin/nologin -g apache apache
+    useradd -r -d $httpd_root -s /usr/sbin/nologin -g apache apache
     popd
 fi
 
 # configure apache
 if ! diff "$rwrs_root/etc/httpd.service" /etc/systemd/system/httpd.service || \
-   ! diff "$rwrs_root/etc/httpd.conf" /usr/httpd/conf/httpd.conf
+   ! diff "$rwrs_root/etc/httpd.conf" $httpd_root/conf/httpd.conf
 then
     cp -vf "$rwrs_root/etc/httpd.service" /etc/systemd/system/
-    cp -vf "$rwrs_root/etc/httpd.conf" /usr/httpd/conf/
-    rm -rf /usr/httpd/htdocs
-    ln -s "$rwrs_root/htdocs" /usr/httpd/htdocs
+    cp -vf "$rwrs_root/etc/httpd.conf" $httpd_root/conf/
+    rm -rf $htdocs_root
+    ln -s "$rwrs_root/htdocs" $htdocs_root
     systemctl daemon-reload
     systemctl enable httpd
-    systemctl start httpd
+    systemctl restart httpd
 fi
 
 # TODO tls ircd
