@@ -3,6 +3,7 @@ set -eux
 source "$(cd $(dirname "${BASH_SOURCE[0]}") &>/dev/null && pwd)/common.sh"
 
 # install packages
+apt-get -y update
 DEBIAN_FRONTEND=noninteractive \
 apt install -yq build-essential libtool libtool-bin sudo quota net-tools curl \
     git zsh vim emacs nano mle screen tmux irssi weechat inspircd subversion \
@@ -81,10 +82,15 @@ then
     rm -rf $htdocs_root
     ln -s "$rwrs_root/htdocs" $htdocs_root
     systemctl daemon-reload
-    systemctl enable httpd
-    systemctl restart httpd
+    if systemctl is-active httpd; then
+        systemctl reload httpd
+    else
+        systemctl enable httpd
+        systemctl restart httpd
+    fi
 fi
 
 # TODO tls ircd
 # TODO tls httpd
 # TODO alerting
+# TODO build php instead of pkg

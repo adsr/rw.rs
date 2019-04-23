@@ -82,6 +82,7 @@ create_test_user() {
     root_cmd "mkdir -p $rwrs_dir/users/$test_user"
     root_cmd "cat >$rwrs_dir/users/$test_user/authorized_keys" <"${testkey_fname}.pub"
     root_cmd "$rwrs_dir/bin/create_users.sh"
+    root_cmd "$rwrs_dir/bin/gen_user_cgi_conf.sh"
 }
 
 run_tests() {
