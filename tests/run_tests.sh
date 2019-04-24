@@ -35,6 +35,7 @@ main() {
             \?) usage 1 ;;
         esac
     done
+    set -x
     pushd $tmp_dir
     restore_vm
     gen_patch

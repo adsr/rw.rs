@@ -7,7 +7,9 @@ apt-get -y update
 DEBIAN_FRONTEND=noninteractive \
 apt install -yq build-essential libtool libtool-bin sudo quota net-tools curl \
     git zsh vim emacs nano mle screen tmux irssi weechat inspircd subversion \
-    libxml2-dev libpcre3-dev strace gdb socat sqlite3 php7.3 fish mosh stow
+    libxml2-dev libpcre3-dev strace gdb socat sqlite3 fish mosh stow re2c \
+    bison libssl-dev pkg-config zlib1g-dev libreadline-dev
+systemctl daemon-reexec
 
 # configure quota
 if [ ! -f /aquota.user ]; then
@@ -90,7 +92,22 @@ then
     fi
 fi
 
+# build php
+if ! command -v php ; then
+    pushd ~
+    wget "https://github.com/php/php-src/archive/php-${php_version}.tar.gz"
+    tar xf "php-${php_version}.tar.gz"
+    pushd "php-src-php-${php_version}"
+    ./buildconf --force
+    ./configure --enable-pcntl --enable-sockets --with-openssl --with-readline \
+         --without-pear --with-zlib --enable-soap --enable-bcmath \
+         --enable-mbstring --enable-opcache --enable-debug --disable-fileinfo
+    make
+    make install
+    popd
+    popd
+fi
+
 # TODO tls ircd
 # TODO tls httpd
 # TODO alerting
-# TODO build php instead of pkg

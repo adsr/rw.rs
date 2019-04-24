@@ -14,3 +14,4 @@ httpd_version='2.4.39'
 httpd_root='/usr/httpd'
 htdocs_root="$httpd_root/htdocs"
 do_not_pull_fname='.do_not_pull'
+php_version='7.3.4'
