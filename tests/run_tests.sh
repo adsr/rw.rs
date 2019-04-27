@@ -24,6 +24,7 @@ current_test=''
 test_count=0
 fail_count=0
 assert_count=0
+no_cleanup=0
 
 main() {
     trap on_exit EXIT
@@ -32,6 +33,7 @@ main() {
             h)  usage 0 ;;
             b)  snapshot_name='pristine_root_shell_bootstrapped' ;;
             s)  skip_tests=1 ;;
+            x)  no_cleanup=1 ;;
             \?) usage 1 ;;
         esac
     done
@@ -83,6 +85,7 @@ create_test_user() {
     root_cmd "mkdir -p $rwrs_dir/users/$test_user"
     root_cmd "cat >$rwrs_dir/users/$test_user/authorized_keys" <"${testkey_fname}.pub"
     root_cmd "$rwrs_dir/bin/create_users.sh"
+    root_cmd "$rwrs_dir/bin/update_user_keys.sh"
     root_cmd "$rwrs_dir/bin/gen_user_cgi_conf.sh"
 }
 
@@ -215,7 +218,7 @@ die() {
 }
 
 on_exit() {
-    rm -rf $tmp_dir
+    [ "$no_cleanup" -eq 0 ] && rm -rf $tmp_dir
 }
 
 main "$@"
