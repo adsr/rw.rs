@@ -5,3 +5,4 @@ PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 2-59/10 * * * * root /opt/rw.rs/bin/create_users.sh &>/dev/null
 3-59/10 * * * * root /opt/rw.rs/bin/gen_footer.sh &>/dev/null
 4-59/10 * * * * root /opt/rw.rs/bin/gen_user_cgi_conf.sh &>/dev/null
+5-59/10 * * * * root /opt/rw.rs/bin/update_user_keys.sh &>/dev/null
