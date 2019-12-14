@@ -9,5 +9,5 @@ for uname in $(ls -1 "$rwrs_root/users" | sort); do
     html+="<li><a href='/~$uname'>$uname</a></li>"$'\n'
 done
 html+="</ul>"$'\n'
-html+="<p><a href='https://github.com/adsr/rw.rs/'>et tu?</a></p>"
+html+="<p><a href='https://github.com/adsr/rw.rs/'>source</a></p>"
 echo "$html" >"$htdocs_root/FOOTER.html"
