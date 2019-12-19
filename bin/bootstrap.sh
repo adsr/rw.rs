@@ -2,6 +2,9 @@
 set -eux
 source "$(cd $(dirname "${BASH_SOURCE[0]}") &>/dev/null && pwd)/common.sh"
 
+# set time
+date -s "$(wget -qSO- --max-redirect=0 google.com 2>&1 | grep Date: | cut -d' ' -f5-8)Z"
+
 # install packages
 apt-get -y update
 DEBIAN_FRONTEND=noninteractive \
