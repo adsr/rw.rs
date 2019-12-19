@@ -10,8 +10,9 @@ apt-get -y update
 DEBIAN_FRONTEND=noninteractive \
 apt install -yq build-essential libtool libtool-bin sudo quota net-tools curl \
     git zsh vim emacs nano mle screen tmux irssi weechat inspircd subversion \
-    libxml2-dev libpcre3-dev strace gdb socat sqlite3 fish mosh stow re2c \
-    bison libssl-dev pkg-config zlib1g-dev libreadline-dev
+    libxml2-dev libpcre3-dev strace gdb socat sqlite3 libsqlite3-dev fish mosh \
+    stow re2c bison libssl-dev pkg-config zlib1g-dev libreadline-dev libgd-dev \
+    libfreetype6-dev libwebp-dev libonig-dev
 systemctl daemon-reexec
 
 # configure quota
@@ -104,7 +105,8 @@ if ! command -v php ; then
     ./buildconf --force
     ./configure --enable-pcntl --enable-sockets --with-openssl --with-readline \
          --without-pear --with-zlib --enable-soap --enable-bcmath \
-         --enable-mbstring --enable-opcache --enable-debug --disable-fileinfo
+         --enable-mbstring --enable-opcache --enable-debug --disable-fileinfo \
+         --enable-gd --with-webp --with-jpeg
     make
     make install
     popd
