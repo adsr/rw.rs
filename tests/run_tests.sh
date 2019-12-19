@@ -6,6 +6,7 @@
 #   -h      show this help
 #   -b      use pre-bootstrapped state (faster)
 #   -s      skip tests (bootstrap only)
+#   -x      skip cleanup of temp files
 #
 set -eu
 
@@ -28,7 +29,7 @@ no_cleanup=0
 
 main() {
     trap on_exit EXIT
-    while getopts ":hbs" opt; do
+    while getopts ":hbsx" opt; do
         case $opt in
             h)  usage 0 ;;
             b)  snapshot_name='pristine_root_shell_bootstrapped' ;;
