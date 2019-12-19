@@ -97,7 +97,7 @@ then
 fi
 
 # build php
-if ! command -v php ; then
+if ! { command -v php && [ $(php -r 'echo PHP_VERSION;') = "$php_version" ]; }; then
     pushd ~
     wget "https://github.com/php/php-src/archive/php-${php_version}.tar.gz"
     tar xf "php-${php_version}.tar.gz"
