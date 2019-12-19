@@ -9,7 +9,7 @@
 #
 set -eu
 
-source "$(cd $(dirname $(dirname "${BASH_SOURCE[0]}")) &>/dev/null && pwd)/bin/common.sh"
+source "$(dirname $(cd $(dirname "${BASH_SOURCE[0]}") &>/dev/null && pwd))/bin/common.sh"
 vm_name='rwrs_debian'
 snapshot_name='pristine_root_shell'
 rootkey_fname='rootkey'
