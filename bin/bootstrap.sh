@@ -6,7 +6,7 @@ source "$(cd $(dirname "${BASH_SOURCE[0]}") &>/dev/null && pwd)/common.sh"
 date -s "$(wget -qSO- --max-redirect=0 google.com 2>&1 | grep Date: | cut -d' ' -f5-8)Z"
 
 # install packages
-apt-get -y update
+apt-get -y --allow-releaseinfo-change update
 DEBIAN_FRONTEND=noninteractive \
 apt install -yq build-essential libtool libtool-bin sudo quota net-tools curl \
     git zsh vim emacs nano mle screen tmux irssi weechat inspircd subversion \
