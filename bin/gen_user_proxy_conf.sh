@@ -7,7 +7,7 @@ new_conf="${old_conf}.new"
 
 echo '' >$new_conf
 for uname in $(ls -1 "$rwrs_root/users" | sort); do
-    echo "ProxyPassMatch \"/~$uname/proxy(/.*)?$\" \"unix:/home/$uname/public_html/proxy.sock|http://localhost\"" >>$new_conf
+    echo "ProxyPassMatch \"/~$uname/proxy(/.*)?$\" \"unix:/home/$uname/public_html/proxy.sock|http://$uname\"" >>$new_conf
 done
 
 if ! diff $new_conf $old_conf; then

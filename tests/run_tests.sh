@@ -71,6 +71,8 @@ checkout_and_patch() {
     info 'checking out repo and applying patch'
     root_cmd "DEBIAN_FRONTEND=noninteractive apt install -yq git"
     root_cmd "test -d $rwrs_dir || { cd /opt && git clone $repo_url rw.rs; }"
+    root_cmd "git -C $rwrs_dir reset --hard"
+    root_cmd "git -C $rwrs_dir clean -fdx"
     root_cmd "git -C $rwrs_dir pull --rebase"
     root_cmd "cd $rwrs_dir && patch -p1" <$patch_fname
     root_cmd "touch $rwrs_dir/$do_not_pull_fname"

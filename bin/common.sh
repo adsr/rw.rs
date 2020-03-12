@@ -13,5 +13,6 @@ default_user_motd='...'
 httpd_version='2.4.39'
 httpd_root='/usr/httpd'
 htdocs_root="$httpd_root/htdocs"
+share_lib_dir='/usr/share/lib'
 do_not_pull_fname='.do_not_pull'
 php_version='7.4.0'
