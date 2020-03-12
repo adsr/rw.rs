@@ -7,5 +7,5 @@
 5. Now `./run_tests.sh` to run tests. (A patch from `git diff HEAD` is
    automatically applied to the repo in the vm.)
 6. After tests pass, take another snapshot named
-   `pristine_root_shell_bootstrapped`
+   `pristine_root_shell_bootstrapped` at a root shell.
 7. Now you can run `./run_tests.sh -b` (faster)

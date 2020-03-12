@@ -113,6 +113,11 @@ if ! { command -v php && [ $(php -r 'echo PHP_VERSION;') = "$php_version" ]; }; 
     popd
 fi
 
+# symlink lib dir
+if [ ! -h "$share_lib_dir" ]; then
+    ln -sfv "$rwrs_root/lib" $share_lib_dir
+fi
+
 # TODO tls ircd
 # TODO tls httpd
 # TODO alerting

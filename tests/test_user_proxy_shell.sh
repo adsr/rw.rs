@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ok_marker=$(date +%s)
-http_res_b64=$(echo -en "HTTP/1.1 200 OK\r\n\r\n$ok_marker" | base64)
+http_res_b64=$(echo -en "HTTP/1.1 200 OK\r\n\r\n$ok_marker" | base64 -w0)
 
 cmd=''
 cmd+='mkdir -p ~/public_html; '
