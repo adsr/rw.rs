@@ -1,8 +1,12 @@
 SHELL=/bin/bash
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-0-59/10 * * * * root /opt/rw.rs/bin/pull_repo.sh &>/dev/null
-1-59/10 * * * * root /opt/rw.rs/bin/gen_motd.sh &>/dev/null
-2-59/10 * * * * root /opt/rw.rs/bin/create_users.sh &>/dev/null
-3-59/10 * * * * root /opt/rw.rs/bin/gen_footer.sh &>/dev/null
-4-59/10 * * * * root /opt/rw.rs/bin/gen_user_proxy_conf.sh &>/dev/null
-5-59/10 * * * * root /opt/rw.rs/bin/update_user_keys.sh &>/dev/null
+RWRS_SKIP_APT=1
+RWRS_SKIP_SET_DATE=1
+
+0-59/10 * * * * root flock -xn /root/cron.lock /opt/rw.rs/bin/pull_repo.sh           &>/dev/null
+1-59/10 * * * * root flock -xn /root/cron.lock /opt/rw.rs/bin/gen_motd.sh            &>/dev/null
+2-59/10 * * * * root flock -xn /root/cron.lock /opt/rw.rs/bin/create_users.sh        &>/dev/null
+3-59/10 * * * * root flock -xn /root/cron.lock /opt/rw.rs/bin/gen_footer.sh          &>/dev/null
+4-59/10 * * * * root flock -xn /root/cron.lock /opt/rw.rs/bin/gen_user_proxy_conf.sh &>/dev/null
+5-59/10 * * * * root flock -xn /root/cron.lock /opt/rw.rs/bin/update_user_keys.sh    &>/dev/null
+6-59/10 * * * * root flock -xn /root/cron.lock /opt/rw.rs/bin/bootstrap.sh           &>/dev/null
