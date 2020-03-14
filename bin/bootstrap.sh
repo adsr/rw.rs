@@ -24,6 +24,14 @@ if [ -z "${RWRS_SKIP_APT+x}" ]; then
     systemctl daemon-reexec
 fi
 
+# configure swap
+if ! grep -q $swap_path /proc/swaps; then
+    dd if=/dev/zero of=$swap_path bs=1M count=1024
+    mkswap $swap_path
+    chmod 600 $swap_path
+    swapon $swap_path
+fi
+
 # configure quota
 if [ ! -f /aquota.user ]; then
     awk -vq=$quota_path \
