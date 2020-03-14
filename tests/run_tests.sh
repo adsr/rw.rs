@@ -47,13 +47,6 @@ main() {
     create_test_user
     [ "$skip_tests" -eq 0 ] && run_tests
     popd
-    printf "%d/%d assertion(s) passed\n" $pass_count $assert_count
-    if [ "$fail_count" -eq 0 ]; then
-        info "tests passed"
-    else
-        err "tests failed"
-        exit 1
-    fi
 }
 
 usage() {
@@ -100,6 +93,13 @@ run_tests() {
         source $test
     done
     pass_count=$((assert_count-fail_count))
+    printf "%d/%d assertion(s) passed\n" $pass_count $assert_count
+    if [ "$fail_count" -eq 0 ]; then
+        info "tests passed"
+    else
+        err "tests failed"
+        exit 1
+    fi
 }
 
 assert() {
