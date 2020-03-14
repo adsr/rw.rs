@@ -1,10 +1,12 @@
 #!/bin/bash
 set -eux
 source "$(cd $(dirname "${BASH_SOURCE[0]}") &>/dev/null && pwd)/common.sh"
+log_ns='bootstrap.sh'
 
 # set time
 if [ -z "${RWRS_SKIP_SET_DATE+x}" ]; then
     date -s "$(wget -qSO- --max-redirect=0 google.com 2>&1 | grep Date: | cut -d' ' -f5-8)Z"
+    logger -t $log_ns "set system time"
 fi
 
 # install packages
@@ -22,6 +24,7 @@ if [ -z "${RWRS_SKIP_APT+x}" ]; then
         zlib1g-dev libreadline-dev libgd-dev libfreetype6-dev libwebp-dev \
         libonig-dev
     systemctl daemon-reexec
+    logger -t $log_ns "ran apt updates"
 fi
 
 # configure swap
@@ -30,6 +33,7 @@ if ! grep -q $swap_path /proc/swaps; then
     mkswap $swap_path
     chmod 600 $swap_path
     swapon $swap_path
+    logger -t $log_ns "created swap"
 fi
 
 # configure quota
@@ -41,12 +45,14 @@ if [ ! -f /aquota.user ]; then
     mount -vo remount $quota_path
     quotacheck -ucm $quota_path
     quotaon -v $quota_path
+    logger -t $log_ns "created disk quota"
 fi
 
 # configure sshd
 if ! diff "$rwrs_root/etc/sshd_config" /etc/ssh/sshd_config &>/dev/null; then
     cp -vf "$rwrs_root/etc/sshd_config" /etc/ssh/
     systemctl restart sshd
+    logger -t $log_ns "updated sshd_config"
 fi
 
 # configure restricted user slice
@@ -56,11 +62,13 @@ then
     mkdir -p $restricted_slice_dir
     cp -vf "$rwrs_root/etc/user-restricted.slice.conf" $restricted_slice_dir
     systemctl daemon-reload
+    logger -t $log_ns "updated user-restricted.slice.conf"
 fi
 
 # configure cron
 if ! diff "$rwrs_root/etc/cron" /etc/cron.d/rw-rs &>/dev/null; then
     cp -vf "$rwrs_root/etc/cron" /etc/cron.d/rw-rs
+    logger -t $log_ns "updated cron"
 fi
 
 # configure ircd
@@ -75,6 +83,7 @@ then
     chmod 700 /etc/inspircd/
     chmod 600 /etc/inspircd/inspircd.conf
     systemctl restart inspircd
+    logger -t $log_ns "updated inspircd.conf"
 fi
 
 # build apache
@@ -94,6 +103,7 @@ if [ ! -f $httpd_root/bin/httpd ]; then
     groupadd apache
     useradd -r -d $httpd_root -s /usr/sbin/nologin -g apache apache
     popd
+    logger -t $log_ns "installed httpd"
 fi
 
 # configure apache
@@ -111,6 +121,7 @@ then
         systemctl enable httpd
         systemctl restart httpd
     fi
+    logger -t $log_ns "updated httpd config"
 fi
 
 # build php
@@ -128,11 +139,13 @@ if ! { command -v php && [ $(php -r 'echo PHP_VERSION;') = "$php_version" ]; }; 
     make install
     popd
     popd
+    logger -t $log_ns "installed php"
 fi
 
 # symlink lib dir
 if [ ! -h "$share_lib_dir" ]; then
     ln -sfv "$rwrs_root/lib" $share_lib_dir
+    logger -t $log_ns "symlinked share_lib_dir"
 fi
 
 # TODO tls ircd
