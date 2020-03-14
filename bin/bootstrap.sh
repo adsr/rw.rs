@@ -3,17 +3,26 @@ set -eux
 source "$(cd $(dirname "${BASH_SOURCE[0]}") &>/dev/null && pwd)/common.sh"
 
 # set time
-date -s "$(wget -qSO- --max-redirect=0 google.com 2>&1 | grep Date: | cut -d' ' -f5-8)Z"
+if [ -z "${RWRS_SKIP_SET_DATE+x}" ]; then
+    date -s "$(wget -qSO- --max-redirect=0 google.com 2>&1 | grep Date: | cut -d' ' -f5-8)Z"
+fi
 
 # install packages
-apt-get -y --allow-releaseinfo-change update
-DEBIAN_FRONTEND=noninteractive \
-apt install -yq build-essential libtool libtool-bin sudo quota net-tools curl \
-    git zsh vim emacs nano mle screen tmux irssi weechat inspircd subversion \
-    libxml2-dev libpcre3-dev strace gdb socat sqlite3 libsqlite3-dev fish mosh \
-    stow re2c bison libssl-dev pkg-config zlib1g-dev libreadline-dev libgd-dev \
-    libfreetype6-dev libwebp-dev libonig-dev
-systemctl daemon-reexec
+if [ -z "${RWRS_SKIP_APT+x}" ]; then
+    if ! grep -q testing /etc/apt/sources.list; then
+        echo 'deb http://ftp.us.debian.org/debian/ testing main'      >/etc/apt/sources.list
+        echo 'deb-src http://ftp.us.debian.org/debian/ testing main' >>/etc/apt/sources.list
+    fi
+    apt-get -y --allow-releaseinfo-change update
+    DEBIAN_FRONTEND=noninteractive \
+    apt install -yq build-essential libtool libtool-bin sudo quota net-tools \
+        curl git zsh vim emacs nano mle screen tmux irssi weechat inspircd \
+        subversion libxml2-dev libpcre3-dev strace gdb socat sqlite3 \
+        libsqlite3-dev fish mosh stow re2c bison libssl-dev pkg-config \
+        zlib1g-dev libreadline-dev libgd-dev libfreetype6-dev libwebp-dev \
+        libonig-dev
+    systemctl daemon-reexec
+fi
 
 # configure quota
 if [ ! -f /aquota.user ]; then
