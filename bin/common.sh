@@ -16,3 +16,4 @@ htdocs_root="$httpd_root/htdocs"
 share_lib_dir='/usr/share/lib'
 do_not_pull_fname='.do_not_pull'
 php_version='7.4.2'
+swap_path='/root/swap.img'
