@@ -115,7 +115,7 @@ if ! { command -v php && [ $(php -r 'echo PHP_VERSION;') = "$php_version" ]; }; 
     ./configure --enable-pcntl --enable-sockets --with-openssl --with-readline \
          --without-pear --with-zlib --enable-soap --enable-bcmath \
          --enable-mbstring --enable-opcache --enable-debug --disable-fileinfo \
-         --enable-gd --with-webp --with-jpeg
+         --enable-gd --with-webp --with-jpeg --with-freetype
     make
     make install
     popd
