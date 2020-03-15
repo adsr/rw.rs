@@ -106,6 +106,25 @@ if [ ! -f $httpd_root/bin/httpd ]; then
     logger -t $log_ns "installed httpd"
 fi
 
+# build php
+if ! { command -v php && [ $(php -r 'echo PHP_VERSION;') = "$php_version" ]; }; then
+    pushd ~
+    wget "https://github.com/php/php-src/archive/php-${php_version}.tar.gz"
+    tar xf "php-${php_version}.tar.gz"
+    pushd "php-src-php-${php_version}"
+    ./buildconf --force
+    ./configure --enable-pcntl --enable-sockets --with-openssl --with-readline \
+         --without-pear --with-zlib --enable-soap --enable-bcmath \
+         --enable-mbstring --enable-opcache --enable-debug --disable-fileinfo \
+         --enable-gd --with-webp --with-jpeg --with-freetype \
+         --with-apxs2=$httpd_root/bin/apxs
+    make
+    make install
+    popd
+    popd
+    logger -t $log_ns "installed php"
+fi
+
 # configure apache
 if ! diff "$rwrs_root/etc/httpd.service" /etc/systemd/system/httpd.service || \
    ! diff "$rwrs_root/etc/httpd.conf" $httpd_root/conf/httpd.conf
@@ -122,24 +141,6 @@ then
         systemctl restart httpd
     fi
     logger -t $log_ns "updated httpd config"
-fi
-
-# build php
-if ! { command -v php && [ $(php -r 'echo PHP_VERSION;') = "$php_version" ]; }; then
-    pushd ~
-    wget "https://github.com/php/php-src/archive/php-${php_version}.tar.gz"
-    tar xf "php-${php_version}.tar.gz"
-    pushd "php-src-php-${php_version}"
-    ./buildconf --force
-    ./configure --enable-pcntl --enable-sockets --with-openssl --with-readline \
-         --without-pear --with-zlib --enable-soap --enable-bcmath \
-         --enable-mbstring --enable-opcache --enable-debug --disable-fileinfo \
-         --enable-gd --with-webp --with-jpeg --with-freetype
-    make
-    make install
-    popd
-    popd
-    logger -t $log_ns "installed php"
 fi
 
 # symlink lib dir
