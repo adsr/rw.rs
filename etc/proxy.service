@@ -1,0 +1,5 @@
+[Service]
+ExecStart=/bin/bash -c 'socat UNIX-LISTEN:$HOME/public_html/proxy.sock,fork,perm-early=0666 "SYSTEM:timeout 5 $HOME/proxy"'
+
+[Install]
+WantedBy=default.target
