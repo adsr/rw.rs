@@ -29,7 +29,7 @@ fi
 
 # configure swap
 if ! grep -q $swap_path /proc/swaps; then
-    dd if=/dev/zero of=$swap_path bs=1M count=1024
+    dd if=/dev/zero of=$swap_path bs=1M count=2048
     mkswap $swap_path
     chmod 600 $swap_path
     swapon $swap_path
