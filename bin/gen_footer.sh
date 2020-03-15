@@ -14,4 +14,4 @@ done
 html+="</ul>"$'\n'
 html+="<p><a href='https://github.com/adsr/rw.rs'>Join</a></p>"
 html+="<p><a href='https://tildeverse.org/'>tildeverse</a></p>"
-echo "$html" >"$htdocs_root/FOOTER.html"
+echo "$html" >"$htdocs_root/main/FOOTER.html"

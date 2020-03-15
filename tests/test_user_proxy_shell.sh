@@ -12,4 +12,4 @@ cmd+="sleep 1; curl -m5 -s localhost/~$test_user/proxy/test; wait"
 
 assert $ok_marker \
     "$(test_cmd "$cmd")" \
-    'user proxypass should work'
+    'user proxypass via shell should work'
