@@ -9,7 +9,7 @@ assert yes \
     'httpd should serve a 301 for www.rw.rs'
 
 assert yes \
-    "$(test_cmd '{ curl -H "Host: a.rw.rs" -v localhost 2>&1 | grep -q "hello_from_php"; } && echo yes || echo no')" \
+    "$(test_cmd '{ curl -H "Host: a.rw.rs" -v localhost 2>&1 | grep -q "<h1>a.rw.rs</h1>"; } && echo yes || echo no')" \
     'httpd should serve a 200 via php for a.rw.rs'
 
 assert yes \
