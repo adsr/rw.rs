@@ -13,4 +13,5 @@ for uname in $(ls -1 "$rwrs_root/users" | sort); do
 done
 html+="</ul>"$'\n'
 html+="<p><a href='https://github.com/adsr/rw.rs'>Join</a></p>"
+html+="<p><a href='https://tildeverse.org/'>tildeverse</a></p>"
 echo "$html" >"$htdocs_root/FOOTER.html"
