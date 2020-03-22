@@ -149,6 +149,21 @@ if [ ! -h "$share_lib_dir" ]; then
     logger -t $log_ns "symlinked share_lib_dir"
 fi
 
+# allow users to invoke chsh without a password
+if [ -f /etc/pam.d/chsh ]; then
+    if ! grep -q '^auth sufficient pam_shells.so$' /etc/pam.d/chsh; then
+        sed -i -r \
+            's|^auth\s+required\s+pam_shells\.so$|auth sufficient pam_shells.so|g' \
+            /etc/pam.d/chsh
+        cat /etc/pam.d/chsh
+        grep -q '^auth sufficient pam_shells.so$' /etc/pam.d/chsh
+        logger -t $log_ns "updated /etc/pam.d/chsh"
+    fi
+else
+    echo 'auth sufficient pam_shells.so' >/etc/pam.d/chsh
+    logger -t $log_ns "wrote /etc/pam.d/chsh"
+fi
+
 # TODO tls ircd
 # TODO tls httpd
 # TODO alerting
