@@ -35,7 +35,7 @@ function arwrs_handle_home() {
     $html = arwrs_render_html('<p>URL shortener</p>' .
         '<script src="https://www.google.com/recaptcha/api.js" async defer></script>' .
         '<form action="/shorten" method="post">' .
-        sprintf('<p><input type="text" name="url"  size="64" maxlength="%d" placeholder="path"></p> (<= %d chars)', ARWRS_MAX_URL_LEN, ARWRS_MAX_URL_LEN) .
+        sprintf('<p><input type="text" name="url"  size="64" maxlength="%d" placeholder="URL"> (<= %d chars)<p>', ARWRS_MAX_URL_LEN, ARWRS_MAX_URL_LEN) .
         sprintf('<p><input type="text" name="path" size="24" maxlength="%d" placeholder="path"> (<= %d chars, A-Z, a-z, 0-9, dashes)</p>', ARWRS_MAX_PATH_LEN, ARWRS_MAX_PATH_LEN) .
         sprintf('<div class="g-recaptcha" data-sitekey="%s"></div>', ARWRS_RECAPTCHA_SITEKEY) .
         '<p><input type="submit"></p>' .
@@ -77,7 +77,7 @@ function arwrs_handle_shorten() {
     $captcha_response = $_POST['g-recaptcha-response'] ?? null;
     if (!$captcha_response) {
         return arwrs_respond(400, 'Missing captcha', ['Content-Type: text/plain']);
-    } else if (arwrs_valid_captcha($captcha_response)) {
+    } else if (!arwrs_valid_captcha($captcha_response)) {
         return arwrs_respond(400, 'Invalid captcha', ['Content-Type: text/plain']);
     }
 
