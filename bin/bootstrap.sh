@@ -92,8 +92,9 @@ if ! { [ -f $httpd_root/bin/httpd ] && \
     = "$httpd_version" ] ; }
 then
     pushd ~
-    wget "https://github.com/apache/httpd/archive/${httpd_version}.tar.gz"
-    tar xf "${httpd_version}.tar.gz"
+    wget -O httpd.tar.gz \
+        "https://github.com/apache/httpd/archive/${httpd_version}.tar.gz"
+    tar xf httpd.tar.gz
     pushd "httpd-${httpd_version}"
     svn co http://svn.apache.org/repos/asf/apr/apr/trunk srclib/apr
     ./buildconf
@@ -105,8 +106,8 @@ then
     popd
     groupadd apache
     useradd -r -d $httpd_root -s /usr/sbin/nologin -g apache apache
-    mkdir -p /var/rw.rs/apache
-    chown apache:apache /var/rw.rs/apache
+    mkdir -p $httpd_var_dir
+    chown apache:apache $httpd_var_dir
     popd
     logger -t $log_ns "installed httpd"
 fi
@@ -114,15 +115,16 @@ fi
 # build php
 if ! { command -v php && [ $(php -r 'echo PHP_VERSION;') = "$php_version" ]; }; then
     pushd ~
-    wget "https://github.com/php/php-src/archive/php-${php_version}.tar.gz"
-    tar xf "php-${php_version}.tar.gz"
+    wget -O php.tar.gz \
+        "https://github.com/php/php-src/archive/php-${php_version}.tar.gz"
+    tar xf php.tar.gz
     pushd "php-src-php-${php_version}"
     ./buildconf --force
     ./configure --enable-pcntl --enable-sockets --with-openssl --with-readline \
          --without-pear --with-zlib --enable-soap --enable-bcmath \
-         --enable-mbstring --enable-opcache --enable-debug --disable-fileinfo \
+         --enable-mbstring --enable-opcache --enable-debug \
          --enable-gd --with-webp --with-jpeg --with-freetype \
-         --with-apxs2=$httpd_root/bin/apxs --with-ffi
+         --with-apxs2=$httpd_root/bin/apxs --with-ffi --disable-session
     make
     make install
     popd
