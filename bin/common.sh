@@ -18,5 +18,4 @@ do_not_pull_fname='.do_not_pull'
 php_version='7.4.4'
 php_ini_path='/usr/local/lib/php.ini'
 swap_path='/root/swap.img'
-crawdb_hash='2d951a4a55c8f0fb5509fa0b696094eabec4f5de'
 crawdb_dir="$share_lib_dir/c/crawdb"

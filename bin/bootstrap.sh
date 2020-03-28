@@ -133,7 +133,7 @@ fi
 # symlink php config
 if [ ! -h "$php_ini_path" ]; then
     ln -sfv "$rwrs_root/etc/php.ini" $php_ini_path
-    logger -t $log_ns "symlinked share_lib_dir"
+    logger -t $log_ns "symlinked php_ini_path"
 fi
 
 # configure apache
@@ -175,19 +175,13 @@ else
     logger -t $log_ns "wrote /etc/pam.d/chsh"
 fi
 
-# install crawdb
-if [ "$(git -C $crawdb_dir rev-parse HEAD 2>/dev/null)" != "$crawdb_hash" ]; then
-    if [ ! -d "$crawdb_dir" ]; then
-        git clone 'https://github.com/adsr/crawdb.git' $crawdb_dir
-    fi
+# recompile crawdb
+if [ "$(git -C $crawdb_dir rev-parse HEAD 2>/dev/null)" != \
+     "$(cat $crawdb_dir/.build_hash 2>/dev/null)" ]
+then
     pushd $crawdb_dir
-    git clean -fdx
-    git pull -r
-    git reset --hard $crawdb_hash
     make clean all
+    git rev-parse HEAD >"$crawdb_dir/.build_hash"
     popd
+    logger -t $log_ns "recompiled crawdb"
 fi
-
-# TODO tls ircd
-# TODO tls httpd
-# TODO alerting

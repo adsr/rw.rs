@@ -1,0 +1,3 @@
+[submodule "lib/c/crawdb"]
+	path = lib/c/crawdb
+	url = https://github.com/adsr/crawdb.git

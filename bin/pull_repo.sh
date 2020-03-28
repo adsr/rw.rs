@@ -6,4 +6,4 @@ source "$(cd $(dirname "${BASH_SOURCE[0]}") &>/dev/null && pwd)/common.sh"
 
 git -C "$rwrs_root" reset --hard
 git -C "$rwrs_root" clean -fd
-git -C "$rwrs_root" pull --rebase
+git -C "$rwrs_root" pull --rebase --recurse-submodules
