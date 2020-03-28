@@ -32,14 +32,16 @@ function arwrs_main() {
 
 function arwrs_handle_home() {
     // Render home page and form
-    $html = arwrs_render_html('<p>URL shortener</p>' .
-        '<script src="https://www.google.com/recaptcha/api.js" async defer></script>' .
-        '<form action="/shorten" method="post">' .
-        sprintf('<p><input type="text" name="url"  size="64" maxlength="%d" placeholder="URL"> (<= %d chars)<p>', ARWRS_MAX_URL_LEN, ARWRS_MAX_URL_LEN) .
-        sprintf('<p><input type="text" name="path" size="24" maxlength="%d" placeholder="path"> (<= %d chars, A-Z, a-z, 0-9, dashes)</p>', ARWRS_MAX_PATH_LEN, ARWRS_MAX_PATH_LEN) .
+    $html = arwrs_render_html(
+        '<p>URL shortener</p>' . "\n" .
+        '<script src="https://www.google.com/recaptcha/api.js" async defer></script>' . "\n" .
+        '<form action="/shorten" method="post">' . "\n" .
+        sprintf('<p><input type="text" name="url"  size="64" maxlength="%d" placeholder="URL"> (<= %d chars)<p>', ARWRS_MAX_URL_LEN, ARWRS_MAX_URL_LEN) . "\n" .
+        sprintf('<p><input type="text" name="path" size="24" maxlength="%d" placeholder="path"> (<= %d chars, A-Z, a-z, 0-9, dashes)</p>', ARWRS_MAX_PATH_LEN, ARWRS_MAX_PATH_LEN) . "\n" .
         sprintf('<div class="g-recaptcha" data-sitekey="%s"></div>', ARWRS_RECAPTCHA_SITEKEY) .
-        '<p><input type="submit"></p>' .
-        '</form>');
+        '<p><input type="submit"></p>' . "\n" .
+        '</form>' . "\n"
+    );
     return arwrs_respond(200, $html, ['Content-Type: text/html']);
 }
 
@@ -89,8 +91,8 @@ function arwrs_handle_shorten() {
         return arwrs_respond($error_code, "Failed to shorten URL $url: $error_msg", ['Content-Type: text/plain']);
     }
     $html = arwrs_render_html(sprintf(
-        '<p>Shortened URL <b>%s</b> to:</p>' .
-        '<p><input type="text" value="%s" size="64" onclick="this.select(); document.execCommand(\'copy\');"> (Click to copy)</p>',
+        '<p>Shortened URL <b>%s</b> to:</p>' . "\n" .
+        '<p><input type="text" value="%s" size="64" onclick="this.select(); document.execCommand(\'copy\');"> (Click to copy)</p>' . "\n",
         htmlspecialchars($url),
         htmlspecialchars($short_url)
     ));
@@ -219,7 +221,8 @@ function arwrs_render_html($content) {
         </body>
         </html>
     EOD;
-    return ltrim($html_header) . "\n" . $content . "\n" . ltrim($html_footer);
+    $strip = fn($s) => preg_replace('/^\s+/m', '', $s);
+    return $strip($html_header) . "\n" . $content . "\n" . $strip($html_footer);
 }
 
 arwrs_main();
