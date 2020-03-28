@@ -22,7 +22,7 @@ if [ -z "${RWRS_SKIP_APT+x}" ]; then
         subversion libxml2-dev libpcre3-dev strace gdb socat sqlite3 \
         libsqlite3-dev fish mosh stow re2c bison libssl-dev pkg-config \
         zlib1g-dev libreadline-dev libgd-dev libfreetype6-dev libwebp-dev \
-        libonig-dev lua5.3
+        libonig-dev lua5.3 liblua5.3-dev libffi-dev
     systemctl daemon-reexec
     logger -t $log_ns "ran apt updates"
 fi
@@ -87,7 +87,10 @@ then
 fi
 
 # build apache
-if [ ! -f $httpd_root/bin/httpd ]; then
+if ! { [ -f $httpd_root/bin/httpd ] && \
+    [ "$($httpd_root/bin/httpd -v | grep -Po '(?<=Apache/)\d+\.\d+\.\d+')" \
+    = "$httpd_version" ] ; }
+then
     pushd ~
     wget "https://github.com/apache/httpd/archive/${httpd_version}.tar.gz"
     tar xf "${httpd_version}.tar.gz"
@@ -102,6 +105,8 @@ if [ ! -f $httpd_root/bin/httpd ]; then
     popd
     groupadd apache
     useradd -r -d $httpd_root -s /usr/sbin/nologin -g apache apache
+    mkdir -p /var/rw.rs/apache
+    chown apache:apache /var/rw.rs/apache
     popd
     logger -t $log_ns "installed httpd"
 fi
@@ -117,12 +122,18 @@ if ! { command -v php && [ $(php -r 'echo PHP_VERSION;') = "$php_version" ]; }; 
          --without-pear --with-zlib --enable-soap --enable-bcmath \
          --enable-mbstring --enable-opcache --enable-debug --disable-fileinfo \
          --enable-gd --with-webp --with-jpeg --with-freetype \
-         --with-apxs2=$httpd_root/bin/apxs
+         --with-apxs2=$httpd_root/bin/apxs --with-ffi
     make
     make install
     popd
     popd
     logger -t $log_ns "installed php"
+fi
+
+# symlink php config
+if [ ! -h "$php_ini_path" ]; then
+    ln -sfv "$rwrs_root/etc/php.ini" $php_ini_path
+    logger -t $log_ns "symlinked share_lib_dir"
 fi
 
 # configure apache
@@ -162,6 +173,19 @@ if [ -f /etc/pam.d/chsh ]; then
 else
     echo 'auth sufficient pam_shells.so' >/etc/pam.d/chsh
     logger -t $log_ns "wrote /etc/pam.d/chsh"
+fi
+
+# install crawdb
+if [ "$(git -C $crawdb_dir rev-parse HEAD 2>/dev/null)" != "$crawdb_hash" ]; then
+    if [ ! -d "$crawdb_dir" ]; then
+        git clone 'https://github.com/adsr/crawdb.git' $crawdb_dir
+    fi
+    pushd $crawdb_dir
+    git clean -fdx
+    git pull -r
+    git reset --hard $crawdb_hash
+    make clean all
+    popd
 fi
 
 # TODO tls ircd
