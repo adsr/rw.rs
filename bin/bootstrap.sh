@@ -94,13 +94,14 @@ then
     pushd ~
     wget -O httpd.tar.gz \
         "https://github.com/apache/httpd/archive/${httpd_version}.tar.gz"
+    rm -rf "httpd-${httpd_version}"
     tar xf httpd.tar.gz
     pushd "httpd-${httpd_version}"
     svn co http://svn.apache.org/repos/asf/apr/apr/trunk srclib/apr
     ./buildconf
     ./configure --prefix=$httpd_root --with-included-apr --with-libxml2=/usr \
         --enable-mods-shared=all --enable-mpms-shared=all --enable-suexec \
-        --enable-proxy --enable-cgi --enable-userdir
+        --enable-proxy --enable-cgi --enable-userdir --enable-debugger-mode
     make
     make install
     popd
@@ -117,6 +118,7 @@ if ! { command -v php && [ $(php -r 'echo PHP_VERSION;') = "$php_version" ]; }; 
     pushd ~
     wget -O php.tar.gz \
         "https://github.com/php/php-src/archive/php-${php_version}.tar.gz"
+    rm -rf "php-src-php-${php_version}"
     tar xf php.tar.gz
     pushd "php-src-php-${php_version}"
     ./buildconf --force
