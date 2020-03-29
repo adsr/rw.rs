@@ -103,7 +103,7 @@ function arwrs_handle_shorten() {
 function arwrs_valid_captcha($captcha_response) {
     // Verify captcha
     // Skip for localhost
-    if (in_array($_SERVER['REMOTE_ADDR'] ?? '', ['::1', '127.0.0.1'])) {
+    if (arwrs_is_local_ip($_SERVER['REMOTE_ADDR'] ?? '')) {
         return true;
     }
     $context = stream_context_create([ 'http' => [
@@ -121,6 +121,11 @@ function arwrs_valid_captcha($captcha_response) {
     );
     $res = @json_decode($json, true);
     return !empty($res['success']);
+}
+
+function arwrs_is_local_ip($ip) {
+    return in_array($ip, ['::1', '127.0.0.1'])
+        || preg_match('/^10\.\d+\.\d+\.\d+$/', $ip);
 }
 
 function arwrs_handle_redirect($path) {
