@@ -1,14 +1,15 @@
 <?php
 
+require 'rwrs.php';
+require 'crawdb.php';
+
 define('ARWRS_BASE_URL', 'http://a.rw.rs');
 define('ARWRS_HOST', 'a.rw.rs');
 define('ARWRS_MAX_PATH_LEN', 6);
 define('ARWRS_MAX_URL_LEN', 2048);
-define('ARWRS_DB_PATH', '/var/rw.rs/apache/arwrs_db');
+define('ARWRS_DB_PREFIX', rwrs_config_require('arwrs_db_prefix'));
 define('ARWRS_CRAWDB_ERR_SET_ALREADY_EXISTS', -24);
 define('ARWRS_RECAPTCHA_SITEKEY', '6LekGeQUAAAAAEbgS2b8I7aC_XwJ8HsUeHYZH-vW');
-
-require '/usr/share/lib/php/crawdb.php';
 
 function arwrs_main() {
     // Switch request by URI and method
@@ -102,7 +103,7 @@ function arwrs_handle_shorten() {
 function arwrs_valid_captcha($captcha_response) {
     // Verify captcha
     // Skip for localhost
-    if (($_SERVER['REMOTE_ADDR'] ?? '') === '127.0.0.1') {
+    if (in_array($_SERVER['REMOTE_ADDR'] ?? '', ['::1', '127.0.0.1'])) {
         return true;
     }
     $context = stream_context_create([ 'http' => [
@@ -168,7 +169,7 @@ function arwrs_lookup($path, &$error_code, &$error_msg) {
 
 function arwrs_with_craw($fn, &$error_code, &$error_msg) {
     // Ensure db dir exists
-    $db_dir = dirname(ARWRS_DB_PATH);
+    $db_dir = dirname(ARWRS_DB_PREFIX);
     if (!is_dir($db_dir)) {
         if (!mkdir($db_dir, 0777, true)) {
             list($error_code, $error_msg) = [500, 'mkdir'];
@@ -177,8 +178,8 @@ function arwrs_with_craw($fn, &$error_code, &$error_msg) {
     }
 
     // Ensure db files exist and open
-    $db_idx = ARWRS_DB_PATH . '.idx';
-    $db_dat = ARWRS_DB_PATH . '.dat';
+    $db_idx = ARWRS_DB_PREFIX . '.idx';
+    $db_dat = ARWRS_DB_PREFIX . '.dat';
     $errno = 0;
     if (is_file($db_idx)) {
         $crawh = crawdb_open($db_idx, $db_dat, $errno);
