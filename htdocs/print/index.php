@@ -3,7 +3,8 @@
 require 'rwrs.php';
 require 'crawdb.php';
 
-define('PRINT_MAX_LINE_LEN', 42);
+define('PRINT_MAX_MSG_LEN', 42);
+define('PRINT_MAX_NAME_LEN', 16);
 define('PRINT_QUEUE_PATH', '/var/rw.rs/apache/print_queue.txt');
 
 function print_main() {
@@ -23,7 +24,9 @@ function print_handle_home() {
         '<p><img src="/image" width="640" height="480"></p>' . "\n" .
         '<script src="https://www.google.com/recaptcha/api.js" async defer></script>' . "\n" .
         '<form action="/" method="post">' . "\n" .
-        sprintf('<p><input type="text" name="line" size="64" placeholder="line"> (<= %d chars)<p>', PRINT_MAX_LINE_LEN) . "\n" .
+        sprintf('<p><input type="text" name="msg" size="64" placeholder="message"> (<= %d chars)<p>', PRINT_MAX_MSG_LEN) . "\n" .
+        sprintf('<p><input type="text" name="name" size="16" placeholder="anonymous"> (<= %d chars)<p>', PRINT_MAX_NAME_LEN) . "\n" .
+        '<p>(chars=<a href="https://i.imgur.com/rAvecgL.jpg">0x20-0xff</a>, bold=0x01, underline=0x02, invert=0x03)</p>' . "\n" .
         sprintf('<div class="g-recaptcha" data-sitekey="%s"></div>', $_SERVER['RECAPTCHA_SITEKEY'] ?? '') .
         '<p><input type="submit"></p>' . "\n" .
         '</form>' . "\n"
@@ -40,17 +43,35 @@ function print_handle_print() {
         return print_respond(400, 'Invalid captcha', ['Content-Type: text/plain']);
     }
 
-    // Check line
-    $line = $_POST['line'] ?? '';
-    $line_minus_ctl = preg_replace('/[\x00-\x1f]/', '', $line);
-    if (strlen($line_minus_ctl) < 1) {
-        return print_respond(400, 'Empty line', ['Content-Type: text/plain']);
-    } else if (strlen($line_minus_ctl) > PRINT_MAX_LINE_LEN) {
-        return print_respond(400, 'Line too long', ['Content-Type: text/plain']);
+    // Check msg
+    $msg = $_POST['msg'] ?? '';
+    $msg_minus_ctl = preg_replace('/[\x00-\x1f]/', '', $msg);
+    if (strlen($msg_minus_ctl) < 1) {
+        return print_respond(400, 'Empty message', ['Content-Type: text/plain']);
+    } else if (strlen($msg_minus_ctl) > PRINT_MAX_MSG_LEN) {
+        return print_respond(400, 'Message too long', ['Content-Type: text/plain']);
+    } else if (strlen($msg) > PRINT_MAX_MSG_LEN * 3) {
+        return print_respond(400, 'Message too long', ['Content-Type: text/plain']);
+    }
+
+    // Check name
+    $name = $_POST['name'] ?? '';
+    $name_minus_ctl = preg_replace('/[\x00-\x1f]/', '', $name);
+    if (strlen($name_minus_ctl) < 1) {
+        $name = 'Anonymous';
+    } else if (strlen($name_minus_ctl) > PRINT_MAX_NAME_LEN) {
+        return print_respond(400, 'Name too long', ['Content-Type: text/plain']);
+    } else if (strlen($name) > PRINT_MAX_NAME_LEN * 3) {
+        return print_respond(400, 'Name too long', ['Content-Type: text/plain']);
     }
 
     // Queue for printing
-    $payload = sprintf("%d %s\n", $_SERVER['REQUEST_TIME'] ?? 0, base64_encode($line));
+    $payload = sprintf(
+        "%d %s %s\n",
+        $_SERVER['REQUEST_TIME'] ?? 0,
+        base64_encode($name),
+        base64_encode($msg)
+    );
     $rv = file_put_contents(PRINT_QUEUE_PATH, $payload, FILE_APPEND);
 
     // Respond
