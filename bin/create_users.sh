@@ -7,7 +7,7 @@ log_ns='create_users.sh'
 comm -13 <(cut -d: -f1 /etc/passwd | sort) <(ls -1 "$rwrs_root/users" | sort) | while read uname; do
     uname_dir="$rwrs_root/users/$uname"
     auth_keys="$uname_dir/authorized_keys"
-    uname_len=$(echo "$uname" | wc -c)
+    uname_len=$(echo -n "$uname" | wc -c)
 
     # check reqs
     if [ "$uname_len" -gt "$max_uname_len" ]; then
