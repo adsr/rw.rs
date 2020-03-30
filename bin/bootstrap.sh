@@ -193,7 +193,7 @@ fi
 # make robot user
 if ! id -u robot 2>/dev/null; then
     groupadd robot
-    useradd -r -m -d /home/robot -s /usr/sbin/nologin -g robot robot
+    useradd -r -m -d /home/robot -s /bin/bash -g robot robot
     logger -t $log_ns "created robot user"
 fi
 
