@@ -3,7 +3,7 @@
 php_script=$(cat <<'EOD'
 <?php
 require '/usr/share/lib/php/http.php';
-handle_http(function() {
+http_handle(function() {
     echo 'hello_from_php';
 });
 EOD

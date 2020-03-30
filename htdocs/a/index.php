@@ -3,13 +3,11 @@
 require 'rwrs.php';
 require 'crawdb.php';
 
-define('ARWRS_BASE_URL', 'http://a.rw.rs');
 define('ARWRS_HOST', 'a.rw.rs');
 define('ARWRS_MAX_PATH_LEN', 6);
 define('ARWRS_MAX_URL_LEN', 2048);
 define('ARWRS_DB_PREFIX', rwrs_config_require('arwrs_db_prefix'));
-define('ARWRS_CRAWDB_ERR_SET_ALREADY_EXISTS', -24);
-define('ARWRS_RECAPTCHA_SITEKEY', '6LekGeQUAAAAAEbgS2b8I7aC_XwJ8HsUeHYZH-vW');
+define('ARWRS_CRAWDB_ERR_SET_ALREADY_EXISTS', -25);
 
 function arwrs_main() {
     // Switch request by URI and method
@@ -39,7 +37,7 @@ function arwrs_handle_home() {
         '<form action="/shorten" method="post">' . "\n" .
         sprintf('<p><input type="text" name="url"  size="64" maxlength="%d" placeholder="URL"> (<= %d chars)<p>', ARWRS_MAX_URL_LEN, ARWRS_MAX_URL_LEN) . "\n" .
         sprintf('<p><input type="text" name="path" size="24" maxlength="%d" placeholder="path"> (<= %d chars, A-Z, a-z, 0-9, dashes)</p>', ARWRS_MAX_PATH_LEN, ARWRS_MAX_PATH_LEN) . "\n" .
-        sprintf('<div class="g-recaptcha" data-sitekey="%s"></div>', ARWRS_RECAPTCHA_SITEKEY) .
+        sprintf('<div class="g-recaptcha" data-sitekey="%s"></div>', $_SERVER['RECAPTCHA_SITEKEY'] ?? '') .
         '<p><input type="submit"></p>' . "\n" .
         '</form>' . "\n"
     );
@@ -80,7 +78,7 @@ function arwrs_handle_shorten() {
     $captcha_response = $_POST['g-recaptcha-response'] ?? null;
     if (!$captcha_response) {
         return arwrs_respond(400, 'Missing captcha', ['Content-Type: text/plain']);
-    } else if (!arwrs_valid_captcha($captcha_response)) {
+    } else if (!rwrs_valid_captcha($captcha_response)) {
         return arwrs_respond(400, 'Invalid captcha', ['Content-Type: text/plain']);
     }
 
@@ -98,34 +96,6 @@ function arwrs_handle_shorten() {
         htmlspecialchars($short_url)
     ));
     return arwrs_respond(200, $html, ['Content-Type: text/html']);
-}
-
-function arwrs_valid_captcha($captcha_response) {
-    // Verify captcha
-    // Skip for localhost
-    if (arwrs_is_local_ip($_SERVER['REMOTE_ADDR'] ?? '')) {
-        return true;
-    }
-    $context = stream_context_create([ 'http' => [
-        'method' => 'POST',
-        'content' => http_build_query([
-            'secret' => $_SERVER['RECAPTCHA_SECRET'] ?? '',
-            'response' => $captcha_response,
-        ]),
-        'timeout' => 5,
-    ]]);
-    $json = @file_get_contents(
-        'https://www.google.com/recaptcha/api/siteverify',
-        $use_include_path = false,
-        $context
-    );
-    $res = @json_decode($json, true);
-    return !empty($res['success']);
-}
-
-function arwrs_is_local_ip($ip) {
-    return in_array($ip, ['::1', '127.0.0.1'])
-        || preg_match('/^10\.\d+\.\d+\.\d+$/', $ip);
 }
 
 function arwrs_handle_redirect($path) {

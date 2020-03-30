@@ -7,7 +7,7 @@
  * Example:
  *
  * ```php
- * handle_http(function($request, $set_code_fn, $set_header_fn) {
+ * http_handle(function($request, $set_code_fn, $set_header_fn) {
  *   switch ($request['uri_parts']['path'] ??) {
  *      case '/~adsr/hello':
  *        echo 'hello';
@@ -26,7 +26,7 @@
  * @param callable $handler_fn
  * @param resource $fd_in
  */
-function handle_http($handler_fn, $fd_in = null, $fd_out = null) {
+function http_handle($handler_fn, $fd_in = null, $fd_out = null) {
     // Read from stdin by default
     if ($fd_in === null) {
         $fd_in = STDIN;
@@ -230,7 +230,7 @@ function handle_http($handler_fn, $fd_in = null, $fd_out = null) {
     call_user_func($write_fn, ob_get_clean());
 }
 
-function test_assert($expected, $actual, $what) {
+function http_test_assert($expected, $actual, $what) {
     if ($expected !== $actual) {
         $result = 'FAIL';
         $color = 31;
@@ -243,7 +243,7 @@ function test_assert($expected, $actual, $what) {
     printf("%24s: \x1b[%dm%s\x1b[0m %s\n", $what, $color, $result, $reason);
 }
 
-function test_handle_http() {
+function http_handle_test() {
     $in = fopen('php://memory', 'r+');
     $out = fopen('php://memory', 'r+');
     $handler = function($req, $set_code, $set_header, $write) {
@@ -269,27 +269,27 @@ function test_handle_http() {
     ftruncate($out, 0);
     fwrite($in, "GET /?resp_data=42 HTTP/1.1\r\n\r\n");
     rewind($in);
-    handle_http($handler, $in, $out);
+    http_handle($handler, $in, $out);
     rewind($out);
-    test_assert("HTTP/1.1 200 OK\r\n\r\n42", stream_get_contents($out), 'simple_get_200');
+    http_test_assert("HTTP/1.1 200 OK\r\n\r\n42", stream_get_contents($out), 'simple_get_200');
 
     ftruncate($in, 0);
     ftruncate($out, 0);
     fwrite($in, "GET /?resp_data=woops&resp_code=404&resp_header_field=Content-Type&resp_header_value=text/plain HTTP/1.1\r\n\r\n");
     rewind($in);
-    handle_http($handler, $in, $out);
+    http_handle($handler, $in, $out);
     rewind($out);
-    test_assert("HTTP/1.1 404 Not Found\r\nContent-Type: text/plain\r\n\r\nwoops", stream_get_contents($out), 'simple_get_404');
+    http_test_assert("HTTP/1.1 404 Not Found\r\nContent-Type: text/plain\r\n\r\nwoops", stream_get_contents($out), 'simple_get_404');
 
     ftruncate($in, 0);
     ftruncate($out, 0);
     fwrite($in, "POST /?resp_params=1 HTTP/1.1\r\nContent-Length: 12\r\n\r\nbob=an+uncle");
     rewind($in);
-    handle_http($handler, $in, $out);
+    http_handle($handler, $in, $out);
     rewind($out);
-    test_assert("HTTP/1.1 200 OK\r\n\r\n{\"resp_params\":\"1\",\"bob\":\"an uncle\"}", stream_get_contents($out), 'simple_post');
+    http_test_assert("HTTP/1.1 200 OK\r\n\r\n{\"resp_params\":\"1\",\"bob\":\"an uncle\"}", stream_get_contents($out), 'simple_post');
 }
 
-if (__FILE__ === realpath($_SERVER['SCRIPT_FILENAME'])) {
-    test_handle_http();
+if (!empty(getenv('RWRS_HTTP_TEST', true))) {
+    http_handle_test();
 }

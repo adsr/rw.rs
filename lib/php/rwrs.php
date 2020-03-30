@@ -21,3 +21,27 @@ function rwrs_config_require($name) {
     }
     return $rv;
 }
+
+function rwrs_valid_captcha($captcha_response) {
+    // Verify captcha
+    // Skip for localhost
+    $ip = $_SERVER['REMOTE_ADDR'] ?? '';
+    if (in_array($ip, ['::1', '127.0.0.1']) || preg_match('/^10\.\d+\.\d+\.\d+$/', $ip)) {
+        return true;
+    }
+    $context = stream_context_create([ 'http' => [
+        'method' => 'POST',
+        'content' => http_build_query([
+            'secret' => $_SERVER['RECAPTCHA_SECRET'] ?? '',
+            'response' => $captcha_response,
+        ]),
+        'timeout' => 5,
+    ]]);
+    $json = @file_get_contents(
+        'https://www.google.com/recaptcha/api/siteverify',
+        $use_include_path = false,
+        $context
+    );
+    $res = @json_decode($json, true);
+    return !empty($res['success']);
+}
