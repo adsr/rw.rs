@@ -76,10 +76,10 @@ function print_render_html($content) {
         <html>
         <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>printer.rw.rs</title>
+        <title>print.rw.rs</title>
         </head>
         <body>
-        <h1>printer.rw.rs</h1>
+        <h1>print.rw.rs</h1>
     EOD;
     $html_footer = <<<'EOD'
         </body>

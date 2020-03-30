@@ -189,3 +189,19 @@ then
     popd
     logger -t $log_ns "recompiled crawdb"
 fi
+
+# make robot user
+if ! id -u robot 2>/dev/null; then
+    useradd -r -m -d /home/robot -s /usr/sbin/nologin -g robot robot
+    logger -t $log_ns "created robot user"
+fi
+
+# add robot sudoers entry
+if ! grep -q robot_as_root /etc/sudoers; then
+    echo -e '\n\nrobot ALL=(root:root) NOPASSWD: /opt/rw.rs/bin/robot_as_root.sh' >>/etc/sudoers
+    logger -t $log_ns "created robot sudoer rule"
+fi
+
+# manually configured items:
+#   /usr/httpd/conf/secrets.conf
+#   /home/robot/.ssh
