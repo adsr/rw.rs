@@ -1,3 +1,4 @@
+#!/usr/bin/env php
 <?php
 
 require 'rwrs.php';
@@ -21,9 +22,9 @@ function printcap_main() {
     // Set ctx
     $ctx = (object)[
         'last_ts' => $last_ts,
-        'max_name_len' => rwrs_config_require('print_max_name_len'),
-        'max_msg_len' => rwrs_config_require('print_max_msg_len'),
-        'max_bytes_factor' => rwrs_config_require('print_max_bytes_factor'),
+        'max_name_len' => rwrs_config_require('printcap_max_name_len'),
+        'max_msg_len' => rwrs_config_require('printcap_max_msg_len'),
+        'max_bytes_factor' => rwrs_config_require('printcap_max_bytes_factor'),
     ];
 
     // Process each job in queue
@@ -46,6 +47,7 @@ function printcap_main() {
         escapeshellarg(PRINTCAP_ROBOT_KEY),
         escapeshellarg($rwrs_cmd)
     );
+    exec($cmd, $output, $exit_code);
 
     // Write last_ts and new_etag to disk
     if (!file_exists(dirname(PRINTCAP_LAST_TS_PATH))) {

@@ -12,7 +12,7 @@ main() {
 }
 
 printcap_upload() {
-    cat | su -c "base64 -d >$printcap_image" apache
+    cat | su -s/bin/bash -c "base64 -d >$printcap_image" apache
 }
 
 main
