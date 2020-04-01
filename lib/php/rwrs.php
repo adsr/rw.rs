@@ -22,6 +22,11 @@ function rwrs_config_require($name) {
     return $rv;
 }
 
+function rwrs_croak($msg) {
+    fwrite(STDERR, $msg);
+    exit(1);
+}
+
 function rwrs_valid_captcha($captcha_response) {
     // Verify captcha
     // Skip for localhost
