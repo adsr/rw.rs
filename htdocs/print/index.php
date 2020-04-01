@@ -23,7 +23,7 @@ function print_main() {
 function print_handle_home($ctx) {
     // Render home page and form
     $html = print_render_html(
-        '<p><img src="/image" width="640" height="480"></p>' . "\n" .
+        '<p><img src="/image" width="640" height="480" onclick="this.src=this.src" style="cursor:pointer"></p>' . "\n" .
         '<script src="https://www.google.com/recaptcha/api.js" async defer></script>' . "\n" .
         '<form action="/" method="post">' . "\n" .
         sprintf('<p><input type="text" name="msg" size="64" placeholder="message"> (<= %d chars)<p>', $ctx->printcap_max_msg_len) . "\n" .
