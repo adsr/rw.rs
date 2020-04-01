@@ -38,12 +38,13 @@ function printcap_main() {
     }
 
     // Sleep a bit and upload a picture
-    sleep(30);
+    sleep(10);
     $rwrs_cmd = 'sudo /opt/rw.rs/bin/robot_as_root.sh printcap_upload';
     $cmd = sprintf(
-        '%s -f video4linux2 -i %s -vframes 1 -f webp - | base64 | ssh -i %s robot@rw.rs %s',
+        '%s -f video4linux2 -i %s -vframes 1 -f webp -vf %s - | base64 | ssh -i %s robot@rw.rs %s',
         escapeshellarg(PRINTCAP_FFMPEG_BIN),
         escapeshellarg(PRINTCAP_VIDEO_DEV),
+        escapeshellarg('drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf:fontcolor=green:text=%{gmtime}:x=10:y=10'),
         escapeshellarg(PRINTCAP_ROBOT_KEY),
         escapeshellarg($rwrs_cmd)
     );
@@ -73,7 +74,7 @@ function printcap_handle_job($job, $ctx, &$job_ts) {
     }
 
     // Check if already processed
-    if ($ts <= $last_ts) {
+    if ($ts <= $ctx->last_ts) {
         return false;
     }
 
