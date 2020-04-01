@@ -1,3 +1,3 @@
 <?php
 
-require '/usr/share/lib/c/crawdb/crawdb.php';
+require __DIR__ . '/../c/crawdb/crawdb.php';
