@@ -17,7 +17,7 @@ function printcap_main() {
     $jobs = printcap_get_queue($new_etag);
 
     // Read last_ts from disk
-    $last_ts = (float)(@file_get_contents(PRINTCAP_LAST_TS_PATH) ?: microtime(true));
+    $last_ts = (float)(@file_get_contents(PRINTCAP_LAST_TS_PATH) ?: microtime(true) - 86400.0);
 
     // Set ctx
     $ctx = (object)[
@@ -30,15 +30,19 @@ function printcap_main() {
     // Process each job in queue
     // Keep track of latest job ts
     $max_ts = $last_ts;
+    $n = 0;
     foreach ($jobs as $job) {
         $job_ts = 0;
         if (printcap_handle_job($job, $ctx, $job_ts)) {
             $max_ts = max($max_ts, $job_ts);
+            $n += 1;
+        } else {
+            echo "skipped $job\n";
         }
     }
 
     // Sleep a bit and upload a picture
-    sleep(10);
+    sleep($n * 10);
     $rwrs_cmd = 'sudo /opt/rw.rs/bin/robot_as_root.sh printcap_upload';
     $cmd = sprintf(
         '%s -f video4linux2 -i %s -vframes 1 -f webp -vf %s - | base64 | ssh -i %s robot@rw.rs %s',
@@ -75,6 +79,7 @@ function printcap_handle_job($job, $ctx, &$job_ts) {
 
     // Check if already processed
     if ($ts <= $ctx->last_ts) {
+        // fwrite(STDERR, "skipping old job $ts <= {$ctx->last_ts}; job=$job\n");
         return false;
     }
 
@@ -101,9 +106,9 @@ function printcap_handle_job($job, $ctx, &$job_ts) {
     // Assemble ESC/POS command
     $esc_pos_cmd  = "\x1b@";      // init
     $esc_pos_cmd .= "\x1bM\x01";  // small font size
-    $esc_pos_cmd .= $msg_esc_pos . "\n";
+    $esc_pos_cmd .= $esc_pos_msg . "\n";
     $esc_pos_cmd .= str_repeat(' ', max(0, $ctx->max_msg_len - $name_len));
-    $esc_pos_cmd .= $name_esc_pos . "\n\n";
+    $esc_pos_cmd .= $esc_pos_name . "\n\n";
 
     // Send to printer
     $esc_pos_cmd_64 = base64_encode($esc_pos_cmd);
@@ -115,10 +120,8 @@ function printcap_handle_job($job, $ctx, &$job_ts) {
 
     $output = [];
     $exit_code = 1;
-    // exec($cmd, $output, $exit_code);
-
-    echo $cmd;
-    $exit_code = 0;
+    // echo $cmd . "\n";
+    exec($cmd, $output, $exit_code);
 
     if ($exit_code !== 0) {
         fwrite(STDERR, "failed to print job; job=$job\n");
