@@ -12,7 +12,4 @@ for uname in $(ls -1 "$rwrs_root/users" | sort); do
     fi
 done
 html+="</ul>"$'\n'
-html+="<p><a href='https://github.com/adsr/rw.rs'>join</a></p>"
-html+="<p><a href='http://a.rw.rs'>a.rw.rs</a></p>"
-html+="<p><a href='https://tildeverse.org/'>tildeverse</a></p>"
 echo "$html" >"$htdocs_root/main/FOOTER.html"
