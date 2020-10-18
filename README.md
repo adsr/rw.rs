@@ -14,7 +14,7 @@ To join, submit a pull request with your public key at `users/<you>/authorized_k
     $ ssh-keygen -f ~/.ssh/id_rsa_rwrs
     $
     $ # Add pub key to repo
-    $ mkdir users/<you>
+    $ mkdir users/<you>     # Note: <you> should be <= 10 chars
     $ cp ~/.ssh/id_rsa_rwrs.pub users/<you>/authorized_keys
     $ git add users/<you>/authorized_keys
     $ git commit -m 'add user <you>'
