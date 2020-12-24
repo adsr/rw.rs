@@ -37,7 +37,7 @@ ip_address_allow=''
 for allowed_domain in $allowed_domains; do
     ip_address_allow+="# $allowed_domain"$'\n'
     for a_record in $(dig +noall +answer $allowed_domain | awk '$4=="A"{print $5}'); do
-        ip_address_allow+="$a_record"$'\n'
+        ip_address_allow+="IPAddressAllow=$a_record"$'\n'
     done
     ip_address_allow+=$'\n'
 done
