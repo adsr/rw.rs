@@ -99,8 +99,10 @@ then
     make
     make install
     popd
-    groupadd apache
-    useradd -r -d $httpd_root -s /usr/sbin/nologin -g apache apache
+    if getent passwd apache >/dev/null; then
+        groupadd apache
+        useradd -r -d $httpd_root -s /usr/sbin/nologin -g apache apache
+    fi
     mkdir -p $httpd_var_dir
     chown apache:apache $httpd_var_dir
     popd
