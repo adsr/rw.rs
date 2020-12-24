@@ -22,7 +22,7 @@ if [ -z "${RWRS_SKIP_APT+x}" ]; then
         subversion libxml2-dev libpcre3-dev strace gdb socat sqlite3 \
         libsqlite3-dev fish mosh stow re2c bison libssl-dev pkg-config \
         zlib1g-dev libreadline-dev libgd-dev libfreetype6-dev libwebp-dev \
-        libonig-dev lua5.3 liblua5.3-dev libffi-dev
+        libonig-dev lua5.3 liblua5.3-dev libffi-dev bind9-dnsutils
     systemctl daemon-reexec
     logger -t $log_ns "ran apt updates"
 fi
@@ -56,14 +56,7 @@ if ! diff "$rwrs_root/etc/sshd_config" /etc/ssh/sshd_config &>/dev/null; then
 fi
 
 # configure restricted user slice
-if ! diff "$rwrs_root/etc/user-restricted.slice.conf" \
-          "$restricted_slice_dir/user-restricted.slice.conf" &>/dev/null
-then
-    mkdir -p $restricted_slice_dir
-    cp -vf "$rwrs_root/etc/user-restricted.slice.conf" $restricted_slice_dir
-    systemctl daemon-reload
-    logger -t $log_ns "updated user-restricted.slice.conf"
-fi
+$rwrs_root/bin/update_restricted_slice_conf.sh
 
 # configure cron
 if ! diff "$rwrs_root/etc/cron" /etc/cron.d/rw-rs &>/dev/null; then
@@ -99,7 +92,8 @@ then
     pushd "httpd-${httpd_version}"
     svn co http://svn.apache.org/repos/asf/apr/apr/trunk srclib/apr
     ./buildconf
-    ./configure --prefix=$httpd_root --with-included-apr --with-libxml2=/usr \
+    CFLAGS='-I /usr/include/libxml2/' \
+        ./configure --prefix=$httpd_root --with-included-apr --with-libxml2=/usr \
         --enable-mods-shared=all --enable-mpms-shared=all --enable-suexec \
         --enable-proxy --enable-cgi --enable-userdir --enable-debugger-mode
     make
