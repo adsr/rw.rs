@@ -22,7 +22,7 @@ if [ -z "${RWRS_SKIP_APT+x}" ]; then
         subversion libxml2-dev libpcre3-dev strace gdb socat sqlite3 \
         libsqlite3-dev fish mosh stow re2c bison libssl-dev pkg-config \
         zlib1g-dev libreadline-dev libgd-dev libfreetype6-dev libwebp-dev \
-        libonig-dev lua5.3 liblua5.3-dev libffi-dev bind9-dnsutils
+        libonig-dev lua5.3 liblua5.3-dev libffi-dev bind9-dnsutils cmake
     systemctl daemon-reexec
     logger -t $log_ns "ran apt updates"
 fi
