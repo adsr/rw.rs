@@ -122,7 +122,8 @@ if ! { command -v php && [ $(php -r 'echo PHP_VERSION;') = "$php_version" ]; }; 
          --without-pear --with-zlib --enable-soap --enable-bcmath \
          --enable-mbstring --enable-opcache --enable-debug \
          --enable-gd --with-webp --with-jpeg --with-freetype \
-         --with-apxs2=$httpd_root/bin/apxs --with-ffi --disable-session
+         --with-apxs2=$httpd_root/bin/apxs --with-ffi --disable-session \
+         --disable-fileinfo
     make
     make install
     popd
