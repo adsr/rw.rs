@@ -15,6 +15,7 @@ allowed_domains=$(cat <<'EOD'
     github.com
     irc.data.lt
     irc.ktu.lt
+    irc.libera.chat
     irc.oftc.net
     radiofreqs.space
     raw.githubusercontent.com
