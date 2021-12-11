@@ -196,8 +196,9 @@ if ! id -u robot 2>/dev/null; then
 fi
 
 # add robot sudoers entry
-if ! grep -q robot_as_root /etc/sudoers; then
-    echo -e '\n\nrobot ALL=(root:root) NOPASSWD: /opt/rw.rs/bin/robot_as_root.sh' >>/etc/sudoers
+if ! [ -f /etc/sudoers.d/rwrs_robot ]; then
+    echo 'robot ALL=(root:root) NOPASSWD: /opt/rw.rs/bin/robot_as_root.sh' \
+        >/etc/sudoers.d/rwrs_robot
     logger -t $log_ns "created robot sudoer rule"
 fi
 
