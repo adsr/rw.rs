@@ -140,7 +140,7 @@ if [ ! -h "$php_ini_path" ]; then
 fi
 
 # install ssl certs (not in test env)
-if [ -f /etc/ssl/private/rwrs_priv.pem -a -z "$RWRS_TEST"]; then
+if [ ! -f /etc/ssl/private/rwrs_priv.pem -a -z "${RWRS_TEST+x}" ]; then
     # install certbot
     snap install core
     snap refresh core
