@@ -23,7 +23,7 @@ if [ -z "${RWRS_SKIP_APT+x}" ]; then
         libsqlite3-dev fish mosh stow re2c bison libssl-dev pkg-config \
         zlib1g-dev libreadline-dev libgd-dev libfreetype6-dev libwebp-dev \
         libonig-dev lua5.3 liblua5.3-dev libffi-dev bind9-dnsutils cmake \
-        ca-certificates debian-archive-keyring
+        ca-certificates debian-archive-keyring snapd
     systemctl daemon-reexec
     logger -t $log_ns "ran apt updates"
 fi
@@ -96,7 +96,8 @@ then
     CFLAGS='-I /usr/include/libxml2/' \
         ./configure --prefix=$httpd_root --with-included-apr --with-libxml2=/usr \
         --enable-mods-shared=all --enable-mpms-shared=all --enable-suexec \
-        --enable-proxy --enable-cgi --enable-userdir --enable-debugger-mode
+        --enable-proxy --enable-cgi --enable-userdir --enable-debugger-mode \
+        --enable-ssl
     make
     make install
     popd
@@ -136,6 +137,25 @@ fi
 if [ ! -h "$php_ini_path" ]; then
     ln -sfv "$rwrs_root/etc/php.ini" $php_ini_path
     logger -t $log_ns "symlinked php_ini_path"
+fi
+
+# install ssl certs (not in test env)
+if [ -f /etc/ssl/private/rwrs_priv.pem -a -z "$RWRS_TEST"]; then
+    # install certbot
+    snap install core
+    snap refresh core
+    snap install --classic certbot
+    ln -s /snap/bin/certbot /usr/bin/certbot
+
+    # request cert
+    certbot certonly --non-interactive --manual \
+        --agree-tos --email=rwrs@protonmail.com --domains=rw.rs \
+        --manual-auth-hook=$rwrs_root/bin/certbot_hook.sh \
+        --manual-cleanup-hook=$rwrs_root/bin/certbot_clean.sh
+
+    # symlink
+    ln -s /etc/letsencrypt/live/rw.rs/fullchain.pem /etc/ssl/certs/rwrs_chain.pem
+    ln -s /etc/letsencrypt/live/rw.rs/privkey.pem   /etc/ssl/private/rwrs_priv.pem
 fi
 
 # configure apache

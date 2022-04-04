@@ -57,7 +57,7 @@ usage() {
 
 gen_patch() {
     info 'generating patch'
-    git -C $rwrs_root diff HEAD >$patch_fname
+    git -C $rwrs_root diff origin/master >$patch_fname
 }
 
 checkout_and_patch() {
@@ -73,7 +73,7 @@ checkout_and_patch() {
 
 bootstrap() {
     info 'running bootstrap'
-    root_cmd "$rwrs_dir/bin/bootstrap.sh"
+    root_cmd "RWRS_TEST=1 $rwrs_dir/bin/bootstrap.sh"
 }
 
 create_test_user() {
