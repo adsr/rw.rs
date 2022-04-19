@@ -7,29 +7,56 @@ log_ns='update_restricted_slice_conf.sh'
 # set allowed domains
 allowed_domains=$(cat <<'EOD'
     aussies.space
-    chat.freenode.net
-    club.tilde.chat
+    banner.tildeverse.org
+    breadpunk.club
     cosmic.voyage
+    crawl.tildeverse.org
     ctrl-c.club
+    drone.tildegit.org
     envs.net
+    factorio.tildeverse.org
     github.com
-    irc.data.lt
-    irc.ktu.lt
-    irc.libera.chat
-    irc.oftc.net
-    radiofreqs.space
+    gopher.tildeverse.org
+    heathens.club
+    intranet.tildeverse.org
+    jitsi.tildeverse.org
+    journal.tildeverse.org
+    lists.tildeverse.org
+    mc.tildeverse.org
+    medium.com
+    modded.tildeverse.org
+    news.tildeverse.org
+    pad.tildeverse.org
+    paste.tildeverse.org
+    pleroma.tilde.zone
+    quotes.tilde.chat
     raw.githubusercontent.com
+    rfc.tildeverse.org
+    rss.tildeverse.org
+    search.tildeverse.org
+    slbr.tildeverse.org
+    sr.ht
+    stats.foldingathome.org
+    texto-plano.xyz
     thunix.net
-    tilde.black
     tilde.chat
     tilde.club
+    tildegit.org
     tilde.institute
+    tilde.news
+    tildenic.org
     tilde.pink
+    tilderadio.org
     tilde.team
     tilde.town
     tildeverse.org
+    tilde.wiki
+    tilde.zone
+    ttm.sh
     wilde.ftp.sh
+    write.tildeverse.org
     yourtilde.com
+    zine.tildeverse.org
 EOD
 )
 
