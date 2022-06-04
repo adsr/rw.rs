@@ -21,6 +21,9 @@ comm -13 <(cut -d: -f1 /etc/passwd | sort) <(ls -1 "$rwrs_root/users" | sort) | 
     # add user
     adduser --disabled-password --gecos '' $uname
 
+    # add to mosh group
+    usermod -a -G mosh $uname
+
     # set quota
     setquota -u $uname $quota_soft $quota_hard 0 0 -a
 

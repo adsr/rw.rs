@@ -23,7 +23,7 @@ if [ -z "${RWRS_SKIP_APT+x}" ]; then
         libsqlite3-dev fish mosh stow re2c bison libssl-dev pkg-config \
         zlib1g-dev libreadline-dev libgd-dev libfreetype6-dev libwebp-dev \
         libonig-dev lua5.3 liblua5.3-dev libffi-dev bind9-dnsutils cmake \
-        ca-certificates debian-archive-keyring snapd rsync
+        ca-certificates debian-archive-keyring snapd rsync mosh
     systemctl daemon-reexec
     logger -t $log_ns "ran apt updates"
 fi
@@ -220,6 +220,22 @@ if ! [ -f /etc/sudoers.d/rwrs_robot ]; then
     echo 'robot ALL=(root:root) NOPASSWD: /opt/rw.rs/bin/robot_as_root.sh' \
         >/etc/sudoers.d/rwrs_robot
     logger -t $log_ns "created robot sudoer rule"
+fi
+
+# create mosh group
+groupadd -f mosh
+
+# install rwrs_mosh_server
+if ! diff "$rwrs_root/bin/rwrs_mosh_server.sh" /usr/bin/rwrs_mosh_server &>/dev/null; then
+    cp -vf "$rwrs_root/bin/rwrs_mosh_server.sh" /usr/bin/rwrs_mosh_server
+    logger -t $log_ns "updated rwrs_mosh_server"
+fi
+
+# add mosh sudoers entry
+if ! [ -f /etc/sudoers.d/mosh ]; then
+    echo '%mosh ALL=(root:root) NOPASSWD: /usr/bin/rwrs_mosh_server ""' \
+        >/etc/sudoers.d/mosh
+    logger -t $log_ns "created mosh sudoer rule"
 fi
 
 # manually configured items:
