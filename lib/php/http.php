@@ -67,9 +67,15 @@ function http_handle($handler_fn, $fd_in = null, $fd_out = null) {
 
     // Read remaining content
     $content_len = (int)($headers['content-length'] ?? 0);
-    $remaining_len = $content_len - strlen($request_data) - $header_len - 4;
-    if ($remaining_len > 0) {
-        $request_data .= fread($fd_in, $remaining_len);
+    $total_len = $content_len + $header_len + 4;
+    while (strlen($request_data) < $total_len) {
+        $remaining_len = $total_len - strlen($request_data);
+        $chunk = fread($fd_in, $remaining_len);
+        if ($chunk !== false) {
+            $request_data .= $chunk;
+        } else {
+            break;
+        }
     }
     $content = substr($request_data, $header_len + 4);
 
