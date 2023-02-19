@@ -18,12 +18,12 @@ if [ -z "${RWRS_SKIP_APT+x}" ]; then
     apt-get -y --allow-releaseinfo-change update
     DEBIAN_FRONTEND=noninteractive \
     apt install -yq build-essential libtool libtool-bin sudo quota net-tools \
-        curl git zsh vim emacs nano mle screen tmux irssi weechat inspircd \
+        curl git zsh vim emacs nano mle screen tmux irssi weechat \
         subversion libxml2-dev libpcre3-dev strace gdb socat sqlite3 \
         libsqlite3-dev fish mosh stow re2c bison libssl-dev pkg-config \
         zlib1g-dev libreadline-dev libgd-dev libfreetype6-dev libwebp-dev \
         libonig-dev lua5.3 liblua5.3-dev libffi-dev bind9-dnsutils cmake \
-        ca-certificates debian-archive-keyring snapd rsync mosh
+        ca-certificates debian-archive-keyring snapd rsync
     systemctl daemon-reexec
     logger -t $log_ns "ran apt updates"
 fi
@@ -63,21 +63,6 @@ $rwrs_root/bin/update_restricted_slice_conf.sh
 if ! diff "$rwrs_root/etc/cron" /etc/cron.d/rw-rs &>/dev/null; then
     cp -vf "$rwrs_root/etc/cron" /etc/cron.d/rw-rs
     logger -t $log_ns "updated cron"
-fi
-
-# configure ircd
-if ! diff <(grep -v pass "$rwrs_root/etc/inspircd.conf") \
-          <(grep -v pass /etc/inspircd/inspircd.conf) &>/dev/null
-then
-    cp -vf "$rwrs_root/etc/inspircd.conf" /etc/inspircd/inspircd.conf
-    ircd_pass=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 24)
-    sed -i "s/@ircdpasshere@/$ircd_pass/g" /etc/inspircd/inspircd.conf
-    touch /etc/inspircd/inspircd.motd
-    chown -R irc:irc /etc/inspircd/
-    chmod 700 /etc/inspircd/
-    chmod 600 /etc/inspircd/inspircd.conf
-    systemctl restart inspircd
-    logger -t $log_ns "updated inspircd.conf"
 fi
 
 # build apache

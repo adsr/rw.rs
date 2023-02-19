@@ -35,7 +35,7 @@ To join, submit a pull request with your public key at `users/<you>/authorized_k
     $ mkdir ~/public_html
     $ echo hello internet >~/public_html/index.html
     $
-    $ # Idle in local ircd
+    $ # Idle in tilde.chat IRC
     $ # Submit PRs to `README.md`, `bin/`, `etc/`, `htdocs/`, etc
     $ # Have fun
 
