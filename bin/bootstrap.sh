@@ -125,22 +125,26 @@ if [ ! -h "$php_ini_path" ]; then
 fi
 
 # install ssl certs (not in test env)
-if [ ! -f /etc/ssl/private/rwrs_priv.pem -a -z "${RWRS_TEST+x}" ]; then
+if [ -z "${RWRS_TEST+x}" ]; then
     # install certbot
-    snap install core
-    snap refresh core
-    snap install --classic certbot
-    ln -s /snap/bin/certbot /usr/bin/certbot
+    if ! command -v certbot &>/dev/null; then
+        snap install core
+        snap refresh core
+        snap install --classic certbot
+        ln -sfv /snap/bin/certbot /usr/bin/certbot
+    fi
 
-    # request cert
-    certbot certonly --non-interactive --manual \
-        --agree-tos --email=rwrs@protonmail.com --domains=rw.rs \
-        --manual-auth-hook=$rwrs_root/bin/certbot_hook.sh \
-        --manual-cleanup-hook=$rwrs_root/bin/certbot_clean.sh
-
-    # symlink
-    ln -s /etc/letsencrypt/live/rw.rs/fullchain.pem /etc/ssl/certs/rwrs_chain.pem
-    ln -s /etc/letsencrypt/live/rw.rs/privkey.pem   /etc/ssl/private/rwrs_priv.pem
+    # request cert if not present or expired
+    if [ ! -f /etc/ssl/private/rwrs_priv.pem ] || { certbot certificates | grep -q EXPIRED; }; then
+        certbot certonly --non-interactive --manual \
+            --agree-tos --email=rwrs@protonmail.com --domains=rw.rs \
+            --manual-auth-hook=$rwrs_root/bin/certbot_hook.sh \
+            --manual-cleanup-hook=$rwrs_root/bin/certbot_clean.sh
+        ln -sfv /etc/letsencrypt/live/rw.rs/fullchain.pem /etc/ssl/certs/rwrs_chain.pem
+        ln -sfv /etc/letsencrypt/live/rw.rs/privkey.pem   /etc/ssl/private/rwrs_priv.pem
+        systemctl restart httpd
+        logger -t $log_ns "updated ssl cert"
+    fi
 fi
 
 # configure apache
@@ -150,7 +154,7 @@ then
     cp -vf "$rwrs_root/etc/httpd.service" /etc/systemd/system/
     cp -vf "$rwrs_root/etc/httpd.conf" $httpd_root/conf/
     rm -rf $htdocs_root
-    ln -s "$rwrs_root/htdocs" $htdocs_root
+    ln -sfv "$rwrs_root/htdocs" $htdocs_root
     systemctl daemon-reload
     if systemctl is-active httpd; then
         systemctl reload httpd
