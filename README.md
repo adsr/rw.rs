@@ -2,7 +2,7 @@
 
 An experimental software community with a 199X aesthetic.
 
-To join, submit a pull request with your public key at `users/<you>/authorized_keys`.
+To join, submit a pull request with your public key at `users/<you>/authorized_keys`[^1].
 
 ### Quickstart
 
@@ -10,8 +10,8 @@ To join, submit a pull request with your public key at `users/<you>/authorized_k
     $ git clone https://github.com/<you>/rw.rs.git
     $ cd rw.rs
     $
-    $ # Generate key pair
-    $ ssh-keygen -f ~/.ssh/id_rsa_rwrs
+    $ # Generate key pair (or use an existing key)
+    $ ssh-keygen -t ed25519 -f ~/.ssh/id_rsa_rwrs
     $
     $ # Add pub key to repo
     $ mkdir users/<you>     # Note: <you> should be <= 10 chars
@@ -36,8 +36,8 @@ To join, submit a pull request with your public key at `users/<you>/authorized_k
     $ echo hello internet >~/public_html/index.html
     $
     $ # Idle in tilde.chat IRC
-    $ # Submit PRs to `README.md`, `bin/`, `etc/`, `htdocs/`, etc
-    $ # Have fun
+    $ # Want a new feature? Feel free to submit PRs
+    $ # Enjoy
 
 ### CGI-like setup
 
@@ -132,3 +132,12 @@ can use whatever language you wish.
             )
 
     )
+
+[^1]: Due to abuse, only GitHub accounts with at least a few months of activity
+      will be accepted. If you don't have any GitHub history, please link _to_
+      your GitHub account from some other established identity (e.g., another
+      tilde host, GitLab, a personal web site, etc.) and make a note of such in
+      your PR. For genuine beginners with no established identity, or people
+      wishing to preserve anonymity, I apologize. Unfortunately scammers have
+      used this service for spam and other crap, which has almost resulted in
+      the hosting provider terminating us.
