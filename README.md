@@ -133,9 +133,9 @@ can use whatever language you wish.
 
     )
 
-[^1]: Due to abuse, only GitHub accounts with at least a few months of activity
-      will be accepted. If you don't have any GitHub history, please link _to_
-      your GitHub account from some other established identity (e.g., another
+[^1]: Due to abuse, only GitHub accounts with some sort of legit activity will
+      be accepted. If you don't have any GitHub activity, please link _to_ your
+      GitHub account _from_ some other established identity (e.g., another
       tilde host, GitLab, a personal web site, etc.) and make a note of such in
       your PR. For genuine beginners with no established identity, or people
       wishing to preserve anonymity, I apologize. Unfortunately scammers have
