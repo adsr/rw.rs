@@ -23,3 +23,6 @@ php_ini_path='/usr/local/lib/php.ini'
 swap_path='/root/swap.img'
 crawdb_dir="$share_lib_dir/c/crawdb"
 arwrs_db_prefix="$httpd_var_dir/arwrs_db"
+cert_full=/etc/ssl/certs/rwrs_chain.pem
+cert_priv=/etc/ssl/private/rwrs_priv.pem
+cert_renew_before_s=1209600 # renew 2 weeks before expiry
