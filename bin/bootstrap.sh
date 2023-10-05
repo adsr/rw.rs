@@ -135,15 +135,21 @@ if [ -z "${RWRS_TEST+x}" ]; then
     fi
 
     # request cert if not present or expired
-    if [ ! -f /etc/ssl/private/rwrs_priv.pem ] || { certbot certificates | grep -q EXPIRED; }; then
-        certbot certonly --non-interactive --manual \
-            --agree-tos --email=rwrs@protonmail.com --domains=rw.rs \
+    if $rwrs_root/bin/certbot_is_expired.sh; then
+        logger -t $log_ns "cert expired"
+        certbot certonly \
+            --non-interactive \
+            --manual \
+            --agree-tos \
+            --email=rwrs@protonmail.com \
+            --domains=rw.rs \
+            --preferred-challenges http \
             --manual-auth-hook=$rwrs_root/bin/certbot_hook.sh \
             --manual-cleanup-hook=$rwrs_root/bin/certbot_clean.sh
-        ln -sfv /etc/letsencrypt/live/rw.rs/fullchain.pem /etc/ssl/certs/rwrs_chain.pem
-        ln -sfv /etc/letsencrypt/live/rw.rs/privkey.pem   /etc/ssl/private/rwrs_priv.pem
+        ln -sfv /etc/letsencrypt/live/rw.rs/fullchain.pem $cert_full
+        ln -sfv /etc/letsencrypt/live/rw.rs/privkey.pem   $cert_priv
         systemctl restart httpd
-        logger -t $log_ns "updated ssl cert"
+        logger -t $log_ns "cert updated"
     fi
 fi
 
