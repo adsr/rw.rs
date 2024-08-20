@@ -12,7 +12,7 @@ source "$(cd $(dirname "${BASH_SOURCE[0]}") &>/dev/null && pwd)/common.sh"
     echo "   MOTD generated $(date)"
     echo '   (Psst, write up to 24 bytes in a file called ~/motd)'
     echo
-    find /home -maxdepth 2 -type f -name motd | sort | while read motd_path; do
+    find /home -mindepth 2 -maxdepth 2 -type f -name motd | sort | while read motd_path; do
         user=$(echo $motd_path | cut -d/ -f3)
         motd=$(
             timeout 1 sed -E \
