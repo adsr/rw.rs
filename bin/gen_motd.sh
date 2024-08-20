@@ -16,9 +16,10 @@ source "$(cd $(dirname "${BASH_SOURCE[0]}") &>/dev/null && pwd)/common.sh"
         user=$(echo $motd_path | cut -d/ -f3)
         motd=$(
             { timeout 1 cat $motd_path || true; } | \
-            sed -e 's/[^[:graph:][:space:]]//g' | \
-            sed -e 's/[[:space:]]\+/ /g' | \
-            cut -c1-24 \
+            sed -E \
+                -e 's/[^[:graph:][:space:]]//g' \
+                -e 's/[[:space:]]+/ /g' \
+                -e 's/^(.{0,24}).*$/\1/'
         )
         printf "%${max_uname_len}s: %-24s\n" "$user" "$motd"
     done | column -xc 80
