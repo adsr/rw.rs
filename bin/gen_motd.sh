@@ -15,11 +15,12 @@ source "$(cd $(dirname "${BASH_SOURCE[0]}") &>/dev/null && pwd)/common.sh"
     find /home -maxdepth 2 -type f -name motd | sort | while read motd_path; do
         user=$(echo $motd_path | cut -d/ -f3)
         motd=$(
-            { timeout 1 cat $motd_path || true; } | \
-            sed -E \
+            timeout 1 sed -E \
                 -e 's/[^[:graph:][:space:]]//g' \
                 -e 's/[[:space:]]+/ /g' \
-                -e 's/^(.{0,24}).*$/\1/'
+                -e 's/^(.{0,24}).*$/\1/' \
+                $motd_path \
+            || true
         )
         printf "%${max_uname_len}s: %-24s\n" "$user" "$motd"
     done | column -xc 80
