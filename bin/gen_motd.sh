@@ -16,7 +16,6 @@ source "$(cd $(dirname "${BASH_SOURCE[0]}") &>/dev/null && pwd)/common.sh"
         user=$(echo $motd_path | cut -d/ -f3)
         motd=$(
             { timeout 1 cat $motd_path || true; } | \
-            tr '[:space:]' " " | \
             sed -e 's/[[:space:]]\+/ /g' | \
             sed -e 's/[^[:graph:][:space:]]//g' | \
             cut -c1-24 \
