@@ -16,8 +16,8 @@ source "$(cd $(dirname "${BASH_SOURCE[0]}") &>/dev/null && pwd)/common.sh"
         user=$(echo $motd_path | cut -d/ -f3)
         motd=$(
             { timeout 1 cat $motd_path || true; } | \
-            sed -e 's/[[:space:]]\+/ /g' | \
             sed -e 's/[^[:graph:][:space:]]//g' | \
+            sed -e 's/[[:space:]]\+/ /g' | \
             cut -c1-24 \
         )
         printf "%${max_uname_len}s: %-24s\n" "$user" "$motd"
