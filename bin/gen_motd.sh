@@ -19,10 +19,11 @@ source "$(cd $(dirname "${BASH_SOURCE[0]}") &>/dev/null && pwd)/common.sh"
                 -e 's/[^[:graph:][:space:]]//g' \
                 -e 's/[[:space:]]+/ /g' \
                 -e 's/^(.{0,24}).*$/\1/' \
+                -e ':a; s/^.{0,23}$/& /; ta' \
                 $motd_path \
             || true
         )
-        printf "%${max_uname_len}s: %-24s\n" "$user" "$motd"
+        printf "%${max_uname_len}s: %s\n" "$user" "$motd"
     done | column -xc 80
     echo
     echo "   $rwrs_url"
