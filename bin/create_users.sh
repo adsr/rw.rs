@@ -50,5 +50,9 @@ comm -13 <(cut -d: -f1 /etc/passwd | sort) <(ls -1 "$rwrs_root/users" | sort) | 
     # chown home dir
     chown -vR "$uname:$uname" $home_dir
 
+    # ensure home dir is at least world-executable
+    # see https://github.com/adsr/rw.rs/issues/180
+    chmod -v o+x $home_dir
+
     logger -t $log_ns "created user $uname"
 done
