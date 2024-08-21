@@ -14,7 +14,7 @@ source "$(cd $(dirname "${BASH_SOURCE[0]}") &>/dev/null && pwd)/common.sh"
     echo
     find /home -mindepth 2 -maxdepth 2 -type f -name motd | sort | while read motd_path; do
         user=$(echo $motd_path | cut -d/ -f3)
-        motd=$(
+        motd_padded=$(
             timeout 1 sed -E \
                 -e 's/[^[:graph:][:space:]]//g' \
                 -e 's/[[:space:]]+/ /g' \
@@ -23,7 +23,7 @@ source "$(cd $(dirname "${BASH_SOURCE[0]}") &>/dev/null && pwd)/common.sh"
                 $motd_path \
             || true
         )
-        printf "%${max_uname_len}s: %s\n" "$user" "$motd"
+        printf "%${max_uname_len}s: %s\n" "$user" "$motd_padded"
     done | column -xc 80
     echo
     echo "   $rwrs_url"
