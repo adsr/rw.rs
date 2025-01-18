@@ -57,6 +57,10 @@ allowed_domains=$(cat <<'EOD'
     write.tildeverse.org
     yourtilde.com
     zine.tildeverse.org
+    pypi.org
+    reddit.com
+    pullpush.io
+    api.pullpush.io
 EOD
 )
 
