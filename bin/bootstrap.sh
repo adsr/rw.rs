@@ -18,7 +18,7 @@ if [ -z "${RWRS_SKIP_APT+x}" ]; then
     apt-get -y --allow-releaseinfo-change update
     DEBIAN_FRONTEND=noninteractive \
     apt install -yq build-essential libtool libtool-bin sudo quota net-tools \
-        curl git zsh vim emacs nano mle screen tmux irssi weechat \
+        curl git zsh vim emacs nano mle ed screen tmux irssi weechat \
         subversion libxml2-dev libpcre3-dev strace gdb socat sqlite3 \
         libsqlite3-dev fish mosh stow re2c bison libssl-dev pkg-config \
         zlib1g-dev libreadline-dev libgd-dev libfreetype6-dev libwebp-dev \
