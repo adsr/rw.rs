@@ -11,11 +11,11 @@ To join, submit a pull request with your public key at `users/<you>/authorized_k
     $ cd rw.rs
     $
     $ # Generate key pair (or use an existing key)
-    $ ssh-keygen -t ed25519 -f ~/.ssh/id_rsa_rwrs
+    $ ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519_rwrs
     $
     $ # Add pub key to repo
     $ mkdir users/<you>     # Note: <you> should be <= 10 chars
-    $ cp ~/.ssh/id_rsa_rwrs.pub users/<you>/authorized_keys
+    $ cp ~/.ssh/id_ed25519_rwrs.pub users/<you>/authorized_keys
     $ git add users/<you>/authorized_keys
     $ git commit -m 'add user <you>'
     $ git push
@@ -26,7 +26,7 @@ To join, submit a pull request with your public key at `users/<you>/authorized_k
     $
     $ # After ~10 minutes, account is auto-created
     $ # Login!
-    $ ssh -i ~/.ssh/id_rsa_rwrs <you>@rw.rs
+    $ ssh -i ~/.ssh/id_ed25519_rwrs <you>@rw.rs
     $
     $ # Set your motd
     $ echo hello users >~/motd
