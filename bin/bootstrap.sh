@@ -203,20 +203,6 @@ then
     logger -t $log_ns "recompiled crawdb"
 fi
 
-# make robot user
-if ! id -u robot 2>/dev/null; then
-    groupadd robot
-    useradd -r -m -d /home/robot -s /bin/bash -g robot robot
-    logger -t $log_ns "created robot user"
-fi
-
-# add robot sudoers entry
-if ! [ -f /etc/sudoers.d/rwrs_robot ]; then
-    echo 'robot ALL=(root:root) NOPASSWD: /opt/rw.rs/bin/robot_as_root.sh' \
-        >/etc/sudoers.d/rwrs_robot
-    logger -t $log_ns "created robot sudoer rule"
-fi
-
 # create mosh group
 groupadd -f mosh
 
@@ -235,4 +221,3 @@ fi
 
 # manually configured items:
 #   /usr/httpd/conf/secrets.conf
-#   /home/robot/.ssh
