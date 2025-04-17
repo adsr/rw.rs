@@ -19,10 +19,10 @@ if [ -z "${RWRS_SKIP_APT+x}" ]; then
     DEBIAN_FRONTEND=noninteractive \
     apt install -yq build-essential libtool libtool-bin sudo quota net-tools \
         curl git zsh vim emacs nano mle ed screen tmux irssi weechat \
-        subversion libxml2-dev libpcre3-dev strace gdb socat sqlite3 \
+        subversion libxml2-dev libpcre2-dev strace gdb socat sqlite3 \
         libsqlite3-dev fish mosh stow re2c bison libssl-dev pkg-config \
         zlib1g-dev libreadline-dev libgd-dev libfreetype6-dev libwebp-dev \
-        libonig-dev lua5.3 liblua5.3-dev libffi-dev bind9-dnsutils cmake \
+        libonig-dev lua5.4 liblua5.4-dev libffi-dev bind9-dnsutils cmake \
         ca-certificates debian-archive-keyring snapd rsync unattended-upgrades
     systemctl daemon-reexec
     logger -t $log_ns "ran apt updates"
