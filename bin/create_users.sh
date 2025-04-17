@@ -19,7 +19,7 @@ comm -13 <(cut -d: -f1 /etc/passwd | sort) <(ls -1 "$rwrs_root/users" | sort) | 
     fi
 
     # add user
-    adduser --disabled-password --gecos '' $uname
+    adduser --allow-bad-names --disabled-password --gecos '' $uname
 
     # add to mosh group
     usermod -a -G mosh $uname
