@@ -22,6 +22,18 @@ source "$(cd $(dirname "${BASH_SOURCE[0]}") &>/dev/null && pwd)/common.sh"
                 -e ':a; s/^.{0,23}$/& /; ta' \
             || true
         )
+        # The `sed` command above doesn't account for double-width characters.
+        # We can use `wc -L` to approximate column width. (I say "approximate"
+        # because calculating column width is difficult[1], and I doubt `wc`
+        # accounts for all the edge cases.) Anyway, lop off 1 character at a
+        # time until `wc` reports 24 or less columns.
+        #
+        # [1]: https://www.jeffquast.com/post/ucs-detect-test-results
+        while true; do
+            motd_width=$(echo "$motd_padded" | wc -L)
+            test "$motd_width" -le 24 && break
+            motd_padded=${motd_padded::-1}
+        done
         printf "%${max_uname_len}s: %s\n" "$user" "$motd_padded"
     done | column -xc 80
     echo
