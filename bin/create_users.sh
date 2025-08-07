@@ -19,7 +19,7 @@ comm -13 <(cut -d: -f1 /etc/passwd | sort) <(ls -1 "$rwrs_root/users" | sort) | 
     fi
 
     # add user
-    adduser --disabled-password --gecos '' $uname
+    adduser --allow-bad-names --disabled-password --gecos '' $uname
 
     # add to mosh group
     usermod -a -G mosh $uname
@@ -53,6 +53,9 @@ comm -13 <(cut -d: -f1 /etc/passwd | sort) <(ls -1 "$rwrs_root/users" | sort) | 
     # ensure home dir is at least world-executable
     # see https://github.com/adsr/rw.rs/issues/180
     chmod -v o+x $home_dir
+
+    # allow `systemd --user` services to run even when logged out
+    loginctl enable-linger $uname
 
     logger -t $log_ns "created user $uname"
 done

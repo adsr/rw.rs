@@ -83,6 +83,7 @@ done <$restricted_slice_template
 if ! diff $restricted_slice_file $tmpf; then
     mkdir -p $(dirname $restricted_slice_file)
     cp -vf $tmpf $restricted_slice_file
+    chmod 644 $restricted_slice_file  # silence warning about it being world-inaccessible
     systemctl daemon-reload
     logger -t $log_ns "updated $restricted_slice_file"
 fi
