@@ -55,7 +55,8 @@ comm -13 <(cut -d: -f1 /etc/passwd | sort) <(ls -1 "$rwrs_root/users" | sort) | 
     chmod -v o+x $home_dir
 
     # allow `systemd --user` services to run even when logged out
-    loginctl enable-linger $uname
+    # TODO: this eats up too much memory. users can request this.
+    # loginctl enable-linger $uname
 
     logger -t $log_ns "created user $uname"
 done
