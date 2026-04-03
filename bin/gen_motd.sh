@@ -1,6 +1,7 @@
 #!/bin/bash
 set -eu
 source "$(cd $(dirname "${BASH_SOURCE[0]}") &>/dev/null && pwd)/common.sh"
+maybe_halt
 
 {
     echo '   ______     __     __       ______     ______'
