@@ -10,6 +10,7 @@ allowed_domains=$(cat <<'EOD'
     banner.tildeverse.org
     breadpunk.club
     cosmic.voyage
+    cpan.org
     crawl.tildeverse.org
     ctrl-c.club
     drone.tildegit.org
