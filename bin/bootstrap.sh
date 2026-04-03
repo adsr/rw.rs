@@ -25,7 +25,8 @@ if [ -z "${RWRS_SKIP_APT+x}" ]; then
         libsqlite3-dev fish mosh stow re2c bison libssl-dev pkg-config \
         zlib1g-dev libreadline-dev libgd-dev libfreetype6-dev libwebp-dev \
         libonig-dev lua5.4 liblua5.4-dev libffi-dev bind9-dnsutils cmake \
-        ca-certificates debian-archive-keyring snapd rsync unattended-upgrades python3.13-venv
+        ca-certificates debian-archive-keyring snapd rsync unattended-upgrades \
+	python3.13-venv cpanminus
     systemctl daemon-reexec
     logger -t $log_ns "ran apt updates"
 fi
