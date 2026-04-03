@@ -1,6 +1,8 @@
 #!/bin/bash
 set -eux
 source "$(cd $(dirname "${BASH_SOURCE[0]}") &>/dev/null && pwd)/common.sh"
+maybe_halt
+
 log_ns='bootstrap.sh'
 
 # set time

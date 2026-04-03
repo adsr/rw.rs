@@ -26,3 +26,5 @@ arwrs_db_prefix="$httpd_var_dir/arwrs_db"
 cert_full=/etc/ssl/certs/rwrs_chain.pem
 cert_priv=/etc/ssl/private/rwrs_priv.pem
 cert_renew_before_s=1209600 # renew 2 weeks before expiry
+halt_file=/var/run/rwrs.halt
+maybe_halt() { if test -f "${halt_file:-/}"; then exit; fi; }

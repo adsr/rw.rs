@@ -1,6 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 source "$(cd $(dirname "${BASH_SOURCE[0]}") &>/dev/null && pwd)/common.sh"
+maybe_halt
 
 duration=1w
 max_fails=14
